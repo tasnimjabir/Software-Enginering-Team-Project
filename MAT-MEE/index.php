@@ -51,7 +51,79 @@
         </div>
     </section>
 
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Products</h2>
+                <p>Explore Our Latest Collection</p>
+            </div>
 
+            <div class="row g-4">
+                <!-- Product Card 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="image/logo.png" alt="Product 1">
+                            <span class="badge">Sale</span>
+                        </div>
+                        <div class="product-info">
+                            <h5>Premium T-Shirt</h5>
+                            <p class="product-category">Casual Wear</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span> (120)
+                            </div>
+                            <div class="product-footer">
+                                <span class="price">$29.99</span>
+                                <button class="btn btn-sm btn-primary">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="image/logo.png" alt="Product 2">
+                            <span class="badge hot">Hot</span>
+                        </div>
+                        <div class="product-info">
+                            <h5>Trendy Hoodie</h5>
+                            <p class="product-category">Streetwear</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★☆</span> (98)
+                            </div>
+                            <div class="product-footer">
+                                <span class="price">$49.99</span>
+                                <button class="btn btn-sm btn-primary">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="image/logo.png" alt="Product 3">
+                        </div>
+                        <div class="product-info">
+                            <h5>Elegant Dress</h5>
+                            <p class="product-category">Formal Wear</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span> (156)
+                            </div>
+                            <div class="product-footer">
+                                <span class="price">$79.99</span>
+                                <button class="btn btn-sm btn-primary">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
