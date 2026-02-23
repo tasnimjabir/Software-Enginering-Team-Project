@@ -1,0 +1,114 @@
+/* ==================== NAVIGATION MENU STYLES ==================== */
+
+.navbar-nav {
+    margin-left: auto;
+    gap: 0;
+
+}
+
+#navbarNav{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* ==================== NAVIGATION LINKS ==================== */
+
+.navbar-nav .nav-link {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-dark) !important;
+    position: relative;
+    font-size: 1rem;
+    padding: 1rem 0.5rem !important;
+    border-left: 3px solid #fff;
+    border-right: 3px solid #fff;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    background: var(--secondary-color);
+}
+
+/* ==================== NAVIGATION LINK ANIMATION ==================== */
+
+.navbar-nav .nav-link.active {
+    color: var(--primary-color) !important;
+}
+
+/* ==================== RESPONSIVE MENU ==================== */
+
+/* Large screens (lg and up) */
+@media (min-width: 992px) {
+    .navbar-nav .nav-link {
+        margin: 0 0.75rem;
+    }
+}
+
+/* Medium screens (md) */
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        margin-top: 1rem;
+        border-top: 2px solid var(--border-color);
+        padding-top: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0 !important;
+        margin: 0.25rem 0 !important;
+        font-size: 1.05rem;
+    }
+
+    .navbar-nav .nav-link::after {
+        display: none;
+    }
+
+    .navbar-nav .nav-link.active {
+        color: var(--primary-color) !important;
+        font-weight: 700;
+    }
+}
+
+/* Tablet screens (sm) */
+@media (max-width: 767.98px) {
+    .navbar-nav {
+        margin-top: 1rem;
+        border-top: 2px solid var(--border-color);
+        padding-top: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0 !important;
+        margin: 0.25rem 0 !important;
+        font-size: 1.05rem;
+    }
+
+    .navbar-nav .nav-link::after {
+        display: none;
+    }
+
+    .navbar-nav .nav-link.active {
+        color: var(--primary-color) !important;
+        font-weight: 700;
+    }
+}
+
+/* Small screens (xs) */
+@media (max-width: 575.98px) {
+    .navbar-nav {
+        margin-top: 1rem;
+        border-top: 2px solid var(--border-color);
+        padding-top: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0 !important;
+        margin: 0.25rem 0 !important;
+        font-size: 1rem;
+    }
+
+    .navbar-nav .nav-link::after {
+        display: none;
+    }
+}

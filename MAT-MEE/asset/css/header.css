@@ -1,0 +1,116 @@
+/* ==================== HEADER & NAVBAR STRUCTURE ==================== */
+
+.header {
+    background: var(--light-color);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.navbar {
+    padding: 0;
+}
+
+/* ==================== LOGO & BRAND ==================== */
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.logo {
+    max-height: 45px;
+    width: auto;
+    transition: var(--transition);
+    filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.1));
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+}
+
+.navbar-brand {
+    padding: 0;
+    margin-right: 2rem;
+}
+
+/* ==================== TOGGLE BUTTON ==================== */
+
+.navbar-toggler {
+    border: 2px solid var(--primary-color);
+    padding: 0.35rem 0.55rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
+    border-color: var(--primary-color);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23800000' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ==================== RESPONSIVE HEADER ==================== */
+
+/* Large screens (lg and up) */
+@media (min-width: 992px) {
+    .brand-name {
+        display: inline;
+    }
+}
+
+/* Medium screens (md) */
+@media (max-width: 991.98px) {
+    .navbar {
+        padding: 0.4rem 0;
+    }
+
+    .logo {
+        max-height: 40px;
+    }
+
+    .navbar-brand {
+        margin-right: 1rem;
+    }
+}
+
+/* Tablet screens (sm) */
+@media (max-width: 767.98px) {
+    .brand-name {
+        display: none;
+    }
+
+    .navbar {
+        padding: 0.4rem 0;
+    }
+
+    .logo {
+        max-height: 40px;
+    }
+
+    .navbar-brand {
+        margin-right: 1rem;
+    }
+}
+
+/* Small screens (xs) */
+@media (max-width: 575.98px) {
+    .logo {
+        max-height: 35px;
+    }
+
+    .navbar {
+        padding: 0.35rem 0;
+    }
+
+    .brand-name {
+        display: none;
+    }
+}

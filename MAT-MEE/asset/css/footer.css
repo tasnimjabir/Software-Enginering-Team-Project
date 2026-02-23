@@ -1,0 +1,114 @@
+/* ==================== FOOTER CONTAINER ==================== */
+
+.footer {
+    background: var(--text-dark);
+    color: #fff;
+    padding: 3rem 0 1rem;
+    margin-top: 3rem;
+    border-top: 3px solid var(--primary-color);
+}
+
+/* ==================== FOOTER HEADINGS ==================== */
+
+.footer h6 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #d1d5db;
+}
+
+/* ==================== FOOTER TEXT ==================== */
+
+.footer p {
+    color: #d1d5db;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+/* ==================== FOOTER LINKS ==================== */
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-links a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* ==================== FOOTER DIVIDER ==================== */
+
+.footer hr {
+    border-color: #374151;
+    margin: 2rem 0;
+}
+
+/* ==================== FOOTER BOTTOM ==================== */
+
+.footer-bottom {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+/* ==================== RESPONSIVE FOOTER ==================== */
+
+/* All breakpoints - Footer is responsive with container */
+@media (max-width: 767.98px) {
+    .footer {
+        padding: 2rem 0 0.75rem;
+    }
+
+    .footer h6 {
+        font-size: 1rem;
+    }
+
+    .footer p {
+        font-size: 0.9rem;
+    }
+
+    .footer-links a {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .footer {
+        padding: 1.5rem 0 0.5rem;
+    }
+
+    .footer h6 {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .footer p {
+        font-size: 0.85rem;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+        font-size: 0.85rem;
+    }
+
+    .footer hr {
+        margin: 1.5rem 0;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+    }
+}
