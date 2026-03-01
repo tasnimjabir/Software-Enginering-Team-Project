@@ -20,6 +20,11 @@
 // Access
 define('ACCESS_ALLOWED', true);
 
+if (str_ends_with($_SERVER['REQUEST_URI'], 'page.php')) {
+    header('Location: ../');
+    exit();
+}
+
 // Connection
 require_once 'connection.php';
 $conn = new DatabaseConnection();

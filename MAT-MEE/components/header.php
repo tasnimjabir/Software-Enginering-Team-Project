@@ -11,7 +11,7 @@ require_once 'config-component.php';
 <body>
     <!-- Header -->
     <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar navbar-expand-sm navbar-light">
             <div class="container">
                 <!-- Logo Left -->
                 <a class="navbar-brand" href="#">
