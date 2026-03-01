@@ -4,7 +4,6 @@
     background: var(--text-dark);
     color: #fff;
     padding: 3rem 0 1rem;
-    margin-top: 3rem;
     border-top: 3px solid var(--primary-color);
 }
 
@@ -29,6 +28,7 @@
 
 .footer-links {
     list-style: none;
+    padding: 0;
 }
 
 .footer-links li {
@@ -38,12 +38,12 @@
 .footer-links a {
     color: #d1d5db;
     text-decoration: none;
-    transition: var(--transition);
+    /* transition: var(--transition); */
     font-size: 0.95rem;
 }
 
 .footer-links a:hover {
-    color: var(--primary-color);
+    border-bottom: 3px solid #d1d5db;
 }
 
 /* ==================== FOOTER DIVIDER ==================== */
