@@ -1,53 +1,23 @@
 <?php
 
-require_once 'config-component.php';
+require_once 'components/config-component.php';
+require_once 'Product.php';
 
-class Product {
-    private $connection;
-    private $products = [];
-    private $sql = '';
+class UserProducts extends Product {
 
-
-    public function __construct($conn, $cat = '', $order = 'created_at DESC') {
-        $this->connection = $conn;
-
-        $this->sql = "SELECT p.id, p.name, p.slug, p.price, p.main_image, c.name as category 
-                        FROM products p 
-                        LEFT JOIN categories c ON p.category_id = c.id";
-        
-        if (!empty($cat)) {
-            $this->sql .= " WHERE c.name = '" . $this->connection->escape($cat) . "'";
-        }
-        
-        $this->sql .= " ORDER BY p." . $order;
-        
+    public function __construct() {
+        parent::__construct();
     }
-
-    public function fetch() {
-        $this->products = $this->connection->fetch($this->sql);
-        return $this;
-    }
-
-    public function setSql($sql) {
-        $this->sql = $sql;
-        return $this;
-    }
-
-
-    public function getProducts() {
-        return $this->products;
-    }
-
 
     public function display($limit = null) {
+        $products = $this->getProducts();
         $id = 1; // sample
         ob_start();
 
-        $productsToDisplay = $this->products;
+        $productsToDisplay = $products;
         if ($limit !== null && $limit > 0) {
-            $productsToDisplay = array_slice($this->products, 0, $limit);
+            $productsToDisplay = array_slice($products, 0, $limit);
         }
-
         if (empty($productsToDisplay)):
             ?>
             <div class="alert alert-info text-center">
@@ -62,24 +32,10 @@ class Product {
                         <a href="product-view.php?id=<?php echo $product['id']; ?>" class="product-card-link">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <!-- <img src="<?php echo $product['main_image'] ?: 'image/logo.png'; ?>"  -->
-                                     <!-- sample -->
-                                    <img src="upload/sample/sample<?php if($id==1){echo 1; $id=2;}else {echo 2; $id=1;}?>.png" 
+                                    <img src="<?php echo htmlspecialchars(!empty($product['main_image']) ? $product['main_image'] : 'image/logo.png'); ?>" 
                                          alt="<?php echo htmlspecialchars($product['name']); ?>"
                                          class="product-img">
-                                        <span class="badge">Sale</span>
-                                        
-                                        <!-- Image Navigation Arrows -->
-                                        <button class="img-nav-btn img-prev" aria-label="Previous image" type="button" onclick="event.stopPropagation();">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="15 18 9 12 15 6"></polyline>
-                                            </svg>
-                                        </button>
-                                        <button class="img-nav-btn img-next" aria-label="Next image" type="button" onclick="event.stopPropagation();">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="9 18 15 12 9 6"></polyline>
-                                            </svg>
-                                        </button>
+                                         <span class="badge">Sale</span>
                                         
                                         <!-- View Button -->
                                         <button class="view-btn" type="button" data-product-id="<?php echo $product['id']; ?>" data-product-name="<?php echo htmlspecialchars($product['name']); ?>" onclick="event.stopPropagation();">
@@ -106,7 +62,8 @@ class Product {
                 <?php endforeach; ?>
             </div>
             <?php
-        endif;?>
+        endif;
+        ?>
 
         <!-- Product Image Modal -->
         <div id="productImageModal" class="product-modal">
@@ -234,49 +191,6 @@ class Product {
                 }
             });
 
-            // Image Navigation - cycle through product images
-            const imgPrevBtns = document.querySelectorAll(".img-prev");
-            const imgNextBtns = document.querySelectorAll(".img-next");
-            
-            imgPrevBtns.forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    const productCard = this.closest(".product-card");
-                    const productImg = productCard.querySelector(".product-img");
-                    const productId = productCard.querySelector(".add-to-cart-btn").dataset.productId;
-                    
-                    // Get current image index
-                    let currentIndex = parseInt(productImg.dataset.imageIndex) || 1;
-                    currentIndex = currentIndex > 1 ? 1 : 2;
-                    
-                    // Update image and store index
-                    productImg.src = "upload/sample/sample" + currentIndex + ".png";
-                    productImg.dataset.imageIndex = currentIndex;
-                });
-            });
-
-            imgNextBtns.forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    const productCard = this.closest(".product-card");
-                    const productImg = productCard.querySelector(".product-img");
-                    const productId = productCard.querySelector(".add-to-cart-btn").dataset.productId;
-                    
-                    // Get current image index and cycle
-                    let currentIndex = parseInt(productImg.dataset.imageIndex) || 1;
-                    currentIndex = currentIndex === 1 ? 2 : 1;
-                    
-                    // Update image and store index
-                    productImg.src = "upload/sample/sample" + currentIndex + ".png";
-                    productImg.dataset.imageIndex = currentIndex;
-                    
-                    // Check if image loaded, if not redirect to product view
-                    productImg.onerror = function() {
-                        window.location.href = "product-view.php?id=" + productId;
-                    };
-                });
-            });
-
             // Quantity selector
             const qtyMinus = document.querySelector(".qty-minus");
             const qtyPlus = document.querySelector(".qty-plus");
@@ -336,25 +250,6 @@ class Product {
         $content = ob_get_clean();
         
         return $content;
-    }
-
-
-    public function render($limit = null) {
-        echo $this->display($limit);
-    }
-
-
-    public function count() {
-        return count($this->products);
-    }
-
-    public function getById($id) {
-        foreach ($this->products as $product) {
-            if ($product['id'] == $id) {
-                return $product;
-            }
-        }
-        return null;
     }
 }
 

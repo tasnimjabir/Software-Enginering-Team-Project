@@ -1,0 +1,80 @@
+PROJECT FILE STRUCTURE
+======================
+
+Software-Enginering-Team-Project/
+│
+├── index.php
+├── README.md
+├── file_structure.txt (this file)
+│
+├── Client-Requirement/
+│   └── Client-details.txt
+│
+├── MAT-MEE/
+│   ├── index.php
+│   │
+│   ├── Admin-matmee/
+│   │   ├── index.php
+│   │   ├── header.php
+│   │   ├── sidebar.php
+│   │   ├── carousel.php
+│   │   ├── view-order.php
+│   │   ├── update-status.php
+│   │   ├── delete-order.php
+│   │   ├── carousel_admin.css
+│   │   └── style.css
+│   │
+│   ├── components/
+│   │   ├── connection.php
+│   │   ├── config-page.php
+│   │   ├── config-component.php
+│   │   ├── header.php
+│   │   ├── menu.php
+│   │   ├── page_close.php
+│   │   ├── Carousel.php
+│   │   └── Product.php
+│   │
+│   ├── asset/
+│   │   └── css/
+│   │       ├── carousel_user.css
+│   │       ├── footer.css
+│   │       ├── header.css
+│   │       ├── menu.css
+│   │       └── style.css
+│   │
+│   ├── sql/
+│   │   ├── create.sql
+│   │   └── SampleData.sql
+│   │
+│   ├── image/
+│   │
+│   └── upload/
+│       ├── product/
+│       └── sample/
+│
+└── Planning-and-Design/
+    └── note.txt
+
+
+DIRECTORY DESCRIPTIONS
+======================
+
+Root Level:
+- index.php: Main entry point
+- README.md: Project documentation
+- file_structure.txt: This file structure documentation
+
+Client-Requirement/:
+- Client-details.txt: Client requirements and specifications
+
+MAT-MEE/ [Main Application Directory]:
+- index.php: Main application page
+- Admin-matmee/: Admin panel for managing orders and carousel
+- components/: Reusable PHP components and configuration
+- asset/: CSS stylesheets for styling
+- sql/: Database schema and sample data
+- image/: Image storage directory
+- upload/: User upload storage (product and sample files)
+
+Planning-and-Design/:
+- note.txt: Project planning and design notes

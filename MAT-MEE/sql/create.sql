@@ -1,16 +1,20 @@
 CREATE TABLE users (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    name varchar(100) NOT NULL,
-    email varchar(100) NOT NULL,
-    password varchar(255) DEFAULT NULL,
-    google_id varchar(100) DEFAULT NULL,
-    otp_code varchar(6) DEFAULT NULL,
-    otp_expires datetime DEFAULT NULL,
-    email_verified tinyint(4) DEFAULT 0,
-    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    role enum('user','admin') DEFAULT 'user',
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) DEFAULT NULL,
+    google_id VARCHAR(100) DEFAULT NULL,
+    otp_code VARCHAR(6) DEFAULT NULL,
+    otp_expires DATETIME DEFAULT NULL,
+    email_verified TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -32,6 +36,12 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
+
+ALTER TABLE products
+  ADD COLUMN discount_price DECIMAL(10,2) DEFAULT NULL
+    AFTER price;
+ 
+-- discount_price: NULL = no discount, otherwise the sale price (must be < price)
 
 CREATE TABLE product_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -92,20 +102,33 @@ CREATE TABLE order_items (
     FOREIGN KEY (size_id) REFERENCES sizes(id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS metadata (
+CREATE TABLE metadata (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     value TEXT
 );
 
-CREATE TABLE carousels (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    image VARCHAR(255) NOT NULL,          -- Background image file name
-    big_text VARCHAR(200) NOT NULL,       -- Big headline
-    small_text VARCHAR(300) DEFAULT '',   -- Small description
-    button_text VARCHAR(100) DEFAULT 'Shop Now',  -- Button text
-    button_link VARCHAR(255) DEFAULT '#shop',     -- Button URL
-    sort_order INT DEFAULT 0,                -- Order in carousel
-    active TINYINT DEFAULT 1,             -- 1 = show, 0 = hide
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS `carousel_slides` (
+    `id`               INT(11)       NOT NULL AUTO_INCREMENT,
+    `title`            VARCHAR(255)  DEFAULT NULL,
+    `subtitle`         VARCHAR(500)  DEFAULT NULL,
+    `button_text`      VARCHAR(100)  DEFAULT NULL,
+    `button_link`      VARCHAR(500)  DEFAULT NULL,
+    `image_path`       VARCHAR(500)  NOT NULL,
+    `title_size`       VARCHAR(10)   NOT NULL DEFAULT '3rem',
+    `subtitle_size`    VARCHAR(10)   NOT NULL DEFAULT '1.1rem',
+    `text_position`    ENUM('left','center','right') NOT NULL DEFAULT 'left',
+    `text_valign`      ENUM('top','middle','bottom') NOT NULL DEFAULT 'middle',
+    `overlay_opacity`  DECIMAL(3,2)  NOT NULL DEFAULT '0.45',
+    `overlay_color`    VARCHAR(20)   NOT NULL DEFAULT '#000000',
+    `text_color`       VARCHAR(20)   NOT NULL DEFAULT '#ffffff',
+    `sort_order`       INT(5)        NOT NULL DEFAULT '0',
+    `is_active`        TINYINT(1)    NOT NULL DEFAULT '1',
+    `created_at`       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_active_order` (`is_active`, `sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Sample seed data
+

@@ -1,0 +1,157 @@
+/* ================================================================
+   MAT-MEE | Carousel  —  carousel_user.css
+   Font sizes come from DB as rem strings applied via inline style.
+================================================================ */
+
+:root {
+    --mm-red:    #800000;
+    --mm-red-dk: #991b1b;
+    --mm-gold:   #3d3c39;
+    --mm-ch:     66vh;
+    --mm-cmin:   480px;
+}
+
+/* ── Wrapper ── */
+.mm-carousel {
+    position:   relative;
+    width:      100%;
+    height:     var(--mm-ch);
+    min-height: var(--mm-cmin);
+    overflow:   hidden;
+    background: #111;
+}
+
+/* ── Slides container ── */
+.mm-slides { position:absolute; inset:0; }
+
+/* ── Single slide ── */
+.mm-slide {
+    position:absolute; inset:0;
+    opacity:0; transition:opacity 0.9s ease; pointer-events:none;
+}
+.mm-slide.mm-active { opacity:1; pointer-events:auto; }
+
+/* ── Background image — Ken Burns zoom ── */
+.mm-slide-bg {
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    transform:scale(1.06); transition:transform 7s ease;
+}
+.mm-slide.mm-active .mm-slide-bg { transform:scale(1); }
+
+/* ── Dark overlay ── */
+.mm-slide-overlay { position:absolute; inset:0; z-index:1; }
+
+/* ── Left red stripe ── */
+/* .mm-carousel::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:linear-gradient(to bottom, var(--mm-red), var(--mm-red-dk), transparent);
+    z-index:10;
+} */
+
+/* ── Content wrapper (flex row — horizontal + vertical positioning) ── */
+.mm-slide-content {
+    position:absolute; inset:0; z-index:2;
+    display:flex;
+    padding:90px 120px;
+}
+
+/* ── Text block ── */
+.mm-text {
+    display:flex; flex-direction:column; gap:20px; max-width:620px;
+    opacity:0; transform:translateY(30px);
+    transition:opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s;
+}
+.mm-slide.mm-active .mm-text { opacity:1; transform:translateY(0); }
+
+/*
+ * .mm-title and .mm-subtitle have no font-size rule here.
+ * Size is applied via inline style in Carousel.php as rem values
+ * (e.g. font-size:3rem) — consistent, readable at all screen sizes.
+ */
+.mm-title {
+    font-family:'Hind Siliguri',sans-serif;
+    font-weight:800; line-height:1.2; margin:0;
+    text-shadow:0 2px 16px rgba(0,0,0,0.6);
+}
+.mm-subtitle {
+    font-family:'Hind Siliguri',sans-serif;
+    line-height:1.7; margin:0; max-width:500px;
+    text-shadow:0 1px 8px rgba(0,0,0,0.5); opacity:0.92;
+}
+
+/* ── Buttons ── */
+.mm-btns { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:6px; }
+
+.mm-btn-primary {
+    display:inline-flex; align-items:center; gap:8px; padding:12px 26px;
+    background:var(--mm-red); color:#fff; border:2px solid var(--mm-red); border-radius:3px;
+    font-family:'Hind Siliguri',sans-serif; font-size:0.95rem; font-weight:600;
+    text-decoration:none; transition:background 0.25s, border-color 0.25s;
+}
+.mm-btn-primary:hover { background:var(--mm-red-dk); border-color:var(--mm-red-dk); color:#fff; }
+.mm-btn-primary i { transition:transform 0.25s; }
+.mm-btn-primary:hover i { transform:translateX(4px); }
+
+.mm-btn-outline {
+    display:inline-flex; align-items:center; padding:12px 26px;
+    background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:3px;
+    font-family:'Hind Siliguri',sans-serif; font-size:0.95rem; font-weight:500;
+    text-decoration:none; transition:background 0.25s, border-color 0.25s;
+}
+.mm-btn-outline:hover { background:rgba(255,255,255,0.12); border-color:#fff; color:#fff; }
+
+/* ── Arrows ── */
+.mm-arrow {
+    position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+    width:48px; height:48px; background:rgba(0,0,0,0.1); color:#fff;
+    border:1px solid rgba(255,255,255,0.1); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.2rem; transition:background 0.25s, border-color 0.25s, transform 0.25s;
+}
+.mm-arrow:hover { background:var(--mm-red); border-color:var(--mm-red); transform:translateY(-50%) scale(1.1); }
+.mm-arrow:focus { outline:none; }
+.mm-prev { left:20px; }
+.mm-next { right:20px; }
+
+/* ── Dots ── */
+.mm-dots {
+    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    z-index:10; display:flex; gap:8px; align-items:center;
+}
+.mm-dot {
+    width:10px; height:10px; border-radius:5px; background:rgba(255,255,255,0.4);
+    border:none; padding:0; cursor:pointer; transition:width 0.3s ease, background 0.3s ease;
+}
+.mm-dot:hover     { background:rgba(255,255,255,0.7); }
+.mm-dot-active    { width:28px; background:var(--mm-red); }
+
+/* ── Progress bar ── */
+.mm-progress { position:absolute; top:0; left:0; right:0; height:3px; background:rgba(255,255,255,0.12); z-index:20; }
+.mm-progress-fill { height:100%; width:0%; background:linear-gradient(90deg, var(--mm-red-dk), var(--mm-gold)); }
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+@media (max-width:992px) {
+    :root { --mm-ch:68vh; --mm-cmin:380px; }
+    .mm-slide-content { padding:50px 70px; }
+}
+@media (max-width:768px) {
+    :root { --mm-ch:60vh; --mm-cmin:320px; }
+    .mm-slide-content { padding:50px 50px; }
+    .mm-arrow  { width:40px; height:40px; font-size:1rem; }
+    .mm-prev   { left:10px; }
+    .mm-next   { right:10px; }
+    .mm-btn-primary, .mm-btn-outline { padding:10px 18px; font-size:0.87rem; }
+}
+@media (max-width:576px) {
+    :root { --mm-ch:54vh; --mm-cmin:270px; }
+    .mm-slide-content { padding:40px 28px; }
+    .mm-arrow  { width:36px; height:36px; font-size:0.9rem; }
+    .mm-prev   { left:6px; }
+    .mm-next   { right:6px; }
+    .mm-text   { gap:12px; }
+    .mm-btns   { gap:8px; }
+    .mm-btn-primary, .mm-btn-outline { padding:9px 14px; font-size:0.82rem; }
+}

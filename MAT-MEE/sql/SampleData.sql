@@ -14,6 +14,9 @@ INSERT INTO users (name, email, password, email_verified, role) VALUES
 ('Sabbir Hossain', 'sabbir.bd@gmail.com', '$2y$10$hashedpass4', 0, 'user'),
 ('Farhana Akter', 'farhanaakter@gmail.com', '$2y$10$hashedpass5', 1, 'user');
 
+INSERT INTO admin (username, password) VALUES
+('admin', '$2y$10$hashedpass6');
+
 -- =====================
 -- CATEGORIES
 -- =====================
@@ -96,10 +99,12 @@ INSERT INTO metadata (name, value) VALUES
 -- =====================
 -- CAROUSEL
 -- =====================
-INSERT INTO carousels (image, big_text, small_text, button_text, button_link, sort_order, active) VALUES
-('slider1.jpg', 'New Eid Collection 2026', 'Discover premium panjabi and three piece collection', 'Shop Now', '/shop', 1, 1),
-('slider2.jpg', 'Flat 20% Off on Men Collection', 'Limited time offer. Grab yours today!', 'Explore', '/men-collection', 2, 1),
-('slider3.jpg', 'Kids Fashion Fiesta', 'Colorful and comfortable outfits for kids', 'Buy Now', '/kids-collection', 3, 1);
+INSERT INTO carousel_slides
+    (`title`, `subtitle`, `button_text`, `button_link`, `image_path`, `title_size`, `subtitle_size`, `text_position`, `text_valign`, `overlay_opacity`, `overlay_color`, `text_color`, `sort_order`, `is_active`)
+VALUES
+    ('নতুন কালেকশন এসেছে', 'এই মৌসুমের সেরা পোশাক আবিষ্কার করুন — স্টাইল ও আরামের অপূর্ব মিশেল।', 'এখনই দেখুন', '/products', 'assets/images/slide1.jpg', '3.2rem', '1.1rem', 'left',   'middle', 0.45, '#000000', '#ffffff', 1, 1),
+    ('গ্রীষ্মকালীন সেল', '৩০% পর্যন্ত ছাড় পাচ্ছেন নির্বাচিত পোশাকে। সীমিত সময়ের অফার!',       'অফার দেখুন',  '/sale',     'assets/images/slide2.jpg', '3.5rem', '1.2rem', 'center', 'bottom', 0.50, '#8B0000', '#ffffff', 2, 1),
+    ('এক্সক্লুসিভ ডিজাইন', 'শুধুমাত্র MAT-MEE-তে পাওয়া যায় — হাতে বোনা ও ডিজাইনার কালেকশন।',  'কেনাকাটা করুন', '/exclusive', 'assets/images/slide3.jpg', '3rem',   '1rem',  'right',  'middle', 0.40, '#1a1a1a', '#f8f8f8', 3, 1);
 
 SET FOREIGN_KEY_CHECKS=1;
 

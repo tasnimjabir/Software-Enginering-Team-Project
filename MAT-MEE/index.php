@@ -15,14 +15,7 @@ Client: MAT MEE
 
 <?php require_once 'components/config-page.php'; ?>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>ঈদ স্পেশাল অফার!</h1>
-            <p>সীমিত সময়ের জন্য পাচ্ছেন বিশেষ ছাড় — এখনই কিনুন, ঈদ হোক আরও আনন্দময়!</p>
-            <a href="#products" class="btn btn-primary btn-lg">Shop Now</a>
-        </div>
-    </section>
+    <?php include 'components/Carousel.php'; ?>
 
     <!-- Products Section -->
     <section class="products-section" id="products">
@@ -33,7 +26,8 @@ Client: MAT MEE
             </div>
 
             <?php
-                (new Product($conn))->fetch()->render();
+                require_once 'components/Classes/ProductBuilder.php';
+                (new ProductBuilder('user'))->fetch()->render();
             ?>
         </div>
     </section>
