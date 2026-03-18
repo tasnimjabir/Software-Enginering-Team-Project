@@ -1,5 +1,5 @@
 <?php
-// menu.php — navigation links only, search handled separately in header
+require_once 'config-component.php';
 ?>
 
 <!-- Menu Right -->

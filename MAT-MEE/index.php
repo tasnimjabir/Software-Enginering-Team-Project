@@ -13,7 +13,7 @@ Client: MAT MEE
 
 <!-- ------------------------------------------ index.php ------------------------------------------ -->
 
-<?php require_once 'components/config-page.php'; ?>
+<?php require_once 'components/config-page.php';?>
 
     <?php include 'components/Carousel.php'; ?>
 

@@ -153,12 +153,12 @@ $discountedItems= $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE discou
                     <?php foreach ($products as $p): ?>
                         <?php
                             $img = !empty($p['main_image'])
-                                ? '../' . ltrim($p['main_image'], '/')
+                                ? '../upload/products/' . ltrim($p['main_image'], '/')
                                 : 'https://via.placeholder.com/300x200/2a2a2a/888?text=No+Image';
                         ?>
                         <div class="product-card" id="pcard-<?= $p['id'] ?>">
                             <div class="product-img-wrap">
-                                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['name']) ?>"
+                                <img src="<?= htmlspecialchars($img)?>" alt="<?= htmlspecialchars($p['name']) ?>"
                                      class="product-img" onerror="this.src='https://via.placeholder.com/300x200/2a2a2a/888?text=No+Image'">
                                 <div class="product-overlay">
                                     <button class="overlay-btn" title="Edit"
@@ -334,7 +334,7 @@ function openEditModal(p) {
     if (allImages.length > 0) {
         allImages.forEach(src => {
             const img = document.createElement('img');
-            img.src = '../' + src.replace(/^\/+/, '');
+            img.src = '../upload/products' + src.replace(/^\/+/, '');
             img.style.maxWidth = '100px';
             img.style.maxHeight = '100px';
             img.style.borderRadius = '6px';
