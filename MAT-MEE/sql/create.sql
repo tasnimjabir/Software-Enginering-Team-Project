@@ -30,6 +30,7 @@ CREATE TABLE products (
     slug VARCHAR(220) UNIQUE NOT NULL,
     description LONGTEXT,
     price DECIMAL(10,2) NOT NULL,
+    discount_price DECIMAL(10,2) DEFAULT NULL,
     category_id INT,
     main_image VARCHAR(255),
     views INT UNSIGNED NOT NULL DEFAULT 0,
@@ -37,9 +38,6 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
-ALTER TABLE products
-  ADD COLUMN discount_price DECIMAL(10,2) DEFAULT NULL
-    AFTER price;
  
 -- discount_price: NULL = no discount, otherwise the sale price (must be < price)
 

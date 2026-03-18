@@ -131,7 +131,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
           <!-- Main image -->
           <div class="pv-main-img-box" id="pvMainBox">
             <img
-              src="<?= htmlspecialchars($allImages[0]) ?>"
+              src="upload/products/<?= htmlspecialchars($allImages[0]) ?>"
               alt="<?= htmlspecialchars($product['name']) ?>"
               class="pv-main-img"
               id="pvMainImg"
@@ -147,7 +147,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
                 class="pv-thumb <?= $i === 0 ? 'active' : '' ?>"
                 data-src="<?= htmlspecialchars($img) ?>"
                 aria-label="ছবি <?= $i + 1 ?>"
-              ><img src="<?= htmlspecialchars($img) ?>" alt="" loading="lazy"></button>
+              ><img src="upload/products/<?= htmlspecialchars($img) ?>" alt="" loading="lazy"></button>
             <?php endforeach; ?>
           </div>
           <?php endif; ?>
@@ -308,7 +308,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
             <?php if ($rHasDisc): ?>
               <span class="pv-rel-badge">-<?= $rPct ?>%</span>
             <?php endif; ?>
-            <img src="<?= htmlspecialchars($r['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($r['name']) ?>" loading="lazy">
+            <img src="upload/products/<?= htmlspecialchars($r['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($r['name']) ?>" loading="lazy">
             <div class="pv-rel-hover-overlay"><i class="bi bi-eye"></i></div>
           </div>
           <div class="pv-rel-body">

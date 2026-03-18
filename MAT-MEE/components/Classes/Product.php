@@ -1,6 +1,6 @@
 <?php
 
-require_once 'components/config-component.php';
+require_once $base_url.'components/config-component.php';
 
 class Product {
     private $connection;

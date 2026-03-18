@@ -1,10 +1,11 @@
 <?php
-require_once 'components/config-component.php';
+require_once $base_url.'components/config-component.php';
 require_once 'Product.php';
 class ProductBuilder {
     private Product $product;
     public function __construct(string $type) {
         if ($type === 'user') {
+            global $base_url;
             require_once 'UserProducts.php';
             $this->product = new UserProducts();
         } else {
@@ -29,5 +30,8 @@ class ProductBuilder {
     }
     public function render($limit = null) {
         return $this->product->render($limit);
+    }
+    public function getInstance(){
+        return $this->product;
     }
 }

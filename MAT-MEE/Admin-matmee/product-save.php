@@ -30,7 +30,7 @@ if ($slugCheck) {
 }
 
 $imagePath = $_POST['existing_image'] ?? '';
-$uploadDir = '../image/products/';
+$uploadDir = '../upload/products/';
 if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -46,7 +46,7 @@ if (isset($_FILES['images']) && is_array($_FILES['images']['tmp_name'])) {
             $dest = $uploadDir . $fileName;
 
             if (move_uploaded_file($tmpName, $dest)) {
-                $imgPath = 'image/products/' . $fileName;
+                $imgPath = $fileName;
                 if (empty($imagePath)) {
                     $imagePath = $imgPath; // The first valid image becomes the main image if one doesn't exist
                 }
