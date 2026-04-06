@@ -28,9 +28,25 @@ if (str_ends_with($_SERVER['REQUEST_URI'], 'config-page.php')) {
 
 $base_url = '';
 
+// Session + cart tracking
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Connection
 require_once 'connection.php';
 $conn = DatabaseConnection::getInstance();
+
+$sessionId = session_id();
+$cart = $conn->fetchOne("SELECT * FROM cart WHERE session_id = ?", [$sessionId]);
+if (!$cart) {
+    $conn->execute("INSERT INTO cart (session_id) VALUES (?)", [$sessionId]);
+    $cartId = $conn->lastId();
+} else {
+    $cartId = $cart['id'];
+}
+
+$cartCount = (int)($conn->fetchOne("SELECT COALESCE(SUM(quantity), 0) AS count FROM cart_items WHERE cart_id = ?", [$cartId])['count'] ?? 0);
 
 // Header 
 include 'header.php';

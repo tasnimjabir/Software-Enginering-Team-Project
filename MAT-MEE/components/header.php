@@ -7,7 +7,7 @@ require_once 'config-component.php';
     <!-- Header -->
     <header class="header">
         <nav class="navbar navbar-expand-sm navbar-light">
-            <div class="container">
+            <div class="container-fluid">
                 <!-- Logo Left -->
                 <a class="navbar-brand" href="#">
                     <div class="logo-wrapper">
@@ -33,13 +33,23 @@ require_once 'config-component.php';
                     </button>
                 </div>
 
+                
+
                 <!-- Menu -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <?php include 'menu.php'; ?>
                 </div>
+                
+                <!-- Mobile search toggle button -->
+                    <button class="search-toggle-btn d-none d-sm-flex d-md-none" id="searchToggleBtn" aria-label="Toggle search" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
 
                 <!-- Desktop search — sits after menu, outside collapse -->
-                <div class="search-bar-desktop d-none d-sm-flex" id="searchBarDesktop">
+                <div class="search-bar-desktop d-none d-sm-flex align-items-center gap-3" id="searchBarDesktop">
                     <form class="search-form" action="shop.php" method="GET">
                         <div class="search-wrap">
                             <svg class="search-icon-inside" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
@@ -57,6 +67,16 @@ require_once 'config-component.php';
                             </button>
                         </div>
                     </form>
+                    
+                    <!-- Cart Icon with Badge -->
+                    <a href="cart.php" class="cart-icon-link" title="Shopping Cart" aria-label="Shopping Cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352L2.977 3H14.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H2.968a.5.5 0 0 1-.491-.408l-1.5-8A.5.5 0 0 1 1 3H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <?php if (isset($cartCount) && $cartCount > 0): ?>
+                            <span class="cart-badge"><?php echo $cartCount; ?></span>
+                        <?php endif; ?>
+                    </a>
                 </div>
 
             </div>

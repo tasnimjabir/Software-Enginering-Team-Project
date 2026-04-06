@@ -10,8 +10,8 @@
                 <div class="col-md-4 ps-5">
                     <h6>Quick Links</h6>
                     <ul class="footer-links">
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="about.php">About Us</a></li>
+                        <li><a href="contact.php">Contact</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                     </ul>
                 </div>

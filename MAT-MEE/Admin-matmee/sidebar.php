@@ -11,6 +11,9 @@
 				'categories.php' => 'Categories',
 				// 'orders.php' => 'Orders',
 				// 'reports.php' => 'Reports',
+				'carousel.php' => 'Carousel',
+				'faqs.php' => 'FAQs',
+				'product-settings.php' => 'Product Info',
 				'settings.php' => 'Settings'
 			];
 			?>

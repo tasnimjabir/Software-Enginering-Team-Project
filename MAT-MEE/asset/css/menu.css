@@ -3,6 +3,8 @@
 .navbar-nav {
     margin-left: auto;
     gap: 0;
+    justify-content: center;
+    flex-grow: 1;
 
 }
 

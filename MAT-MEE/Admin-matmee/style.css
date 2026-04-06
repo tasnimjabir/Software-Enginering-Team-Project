@@ -90,7 +90,7 @@ select option:hover {
 }
 
 .sidebar {
-	width: 220px;
+	width: 140px;
 	background: var(--sidebar);
 	border-right: 1px solid #eee;
 	padding-top: 18px

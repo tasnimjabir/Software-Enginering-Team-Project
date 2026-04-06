@@ -1,4 +1,7 @@
-<?php require_once 'components/config-page.php'; ?>
+<?php 
+ob_start(); // Start output buffering to prevent header issues
+require_once 'components/config-page.php'; 
+?>
 
 <?php
 /* ══════════════════════════════════════════════════════
@@ -34,7 +37,7 @@ if (!empty($_GET['slug'])) {
 }
 
 if (!$product) {
-    /* Product not found — redirect or show 404 */
+    ob_end_clean();
     header('Location: index.php');
     exit;
 }
@@ -79,6 +82,15 @@ $finalPrice  = $hasDiscount ? (float)$product['discount_price'] : (float)$produc
 $discPct     = $hasDiscount ? round((1 - $product['discount_price'] / $product['price']) * 100) : 0;
 $savings     = $hasDiscount ? ($product['price'] - $product['discount_price']) : 0;
 
+/* ── Fetch metadata ── */
+$generalInfo = $conn->fetchOne("SELECT value FROM metadata WHERE name = ?", ['general_info']);
+$sizeGuide = $conn->fetchOne("SELECT value FROM metadata WHERE name = ?", ['size_guide']);
+
+/* ── Fetch FAQs ── */
+$faqs = $conn->fetch(
+    "SELECT id, question, answer FROM faqs WHERE is_active = 1 ORDER BY sort_order ASC"
+);
+
 /* ── Related products (same category, 4 random) ── */
 $related = [];
 if (!empty($product['cat_id'])) {
@@ -103,9 +115,9 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
   <!-- ── Breadcrumb ── -->
   <nav class="pv-breadcrumb">
     <div class="pv-wrap">
-      <a href="index.php">হোম</a>
+      <a href="index.php">Home</a>
       <span class="pv-bc-sep"><i class="bi bi-chevron-right"></i></span>
-      <a href="shop.php">শপ</a>
+      <a href="shop.php">Shop</a>
       <?php if ($product['cat_name']): ?>
         <span class="pv-bc-sep"><i class="bi bi-chevron-right"></i></span>
         <a href="shop.php?category=<?= htmlspecialchars($product['cat_slug']) ?>"><?= htmlspecialchars($product['cat_name']) ?></a>
@@ -120,7 +132,112 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
     <div class="pv-wrap">
       <div class="pv-grid">
 
-        <!-- ════ LEFT  Gallery ════ -->
+        <!-- ════ LEFT  Info & Description ════ -->
+        <div class="pv-left-panel">
+
+          <!-- Category tag -->
+          <?php if ($product['cat_name']): ?>
+            <a class="pv-cat-tag" href="shop.php?category=<?= htmlspecialchars($product['cat_slug']) ?>">
+              <i class="bi bi-tag"></i> <?= htmlspecialchars($product['cat_name']) ?>
+            </a>
+          <?php endif; ?>
+
+          <!-- Title -->
+          <h1 class="pv-title"><?= htmlspecialchars($product['name']) ?></h1>
+
+          <!-- Views -->
+          <p class="pv-views"><i class="bi bi-eye"></i> <?= number_format($product['views']) ?> views</p>
+
+          <!-- Price block -->
+          <div class="pv-price-block">
+            <span class="pv-price-final">৳<?= number_format($finalPrice, 0) ?></span>
+            <?php if ($hasDiscount): ?>
+              <span class="pv-price-orig">৳<?= number_format($product['price'], 0) ?></span>
+              <span class="pv-save-pill">Save ৳<?= number_format($savings, 0) ?></span>
+            <?php endif; ?>
+          </div>
+
+          <!-- Divider -->
+          <div class="pv-hr"></div>
+
+          <!-- ── Size picker ── -->
+          <?php if (!empty($sizes)): ?>
+          <div class="pv-option-row">
+            <label class="pv-opt-label">Size <strong id="pvSizeLbl"></strong></label>
+            <div class="pv-size-wrap" id="pvSizeWrap">
+              <?php foreach ($sizes as $sz): ?>
+                <button class="pv-size-chip" data-val="<?= htmlspecialchars($sz) ?>"><?= htmlspecialchars($sz) ?></button>
+              <?php endforeach; ?>
+            </div>
+            <p class="pv-opt-hint" id="pvSizeErr" style="display:none">
+              <i class="bi bi-exclamation-circle"></i> Please select a size
+            </p>
+          </div>
+          <?php endif; ?>
+
+          <!-- ── Quantity ── -->
+          <div class="pv-option-row">
+            <label class="pv-opt-label">Quantity</label>
+            <div class="pv-qty-box">
+              <button class="pv-qty-btn" id="pvQtyDec" aria-label="Decrease"><i class="bi bi-dash-lg"></i></button>
+              <input type="number" class="pv-qty-inp" id="pvQtyInp" value="1" min="1" max="99" readonly>
+              <button class="pv-qty-btn" id="pvQtyInc" aria-label="Increase"><i class="bi bi-plus-lg"></i></button>
+            </div>
+          </div>
+
+          <!-- ── Action buttons ── -->
+          <div class="pv-actions">
+            <button class="pv-btn-cart" id="pvBtnCart">
+              <i class="bi bi-bag-plus-fill"></i>
+              <span>Add to Cart</span>
+            </button>
+            <button class="pv-btn-buy" id="pvBtnBuy">
+              <i class="bi bi-lightning-charge-fill"></i>
+              <span>Buy Now</span>
+            </button>
+          </div>
+
+          <!-- ── Trust strip ── -->
+          <div class="pv-trust">
+            <div class="pv-trust-item">
+              <i class="bi bi-truck"></i><span>Free Delivery</span>
+            </div>
+            <div class="pv-trust-item">
+              <i class="bi bi-arrow-counterclockwise"></i><span>7 Days Return</span>
+            </div>
+            <div class="pv-trust-item">
+              <i class="bi bi-shield-fill-check"></i><span>Original Product</span>
+            </div>
+            <div class="pv-trust-item">
+              <i class="bi bi-cash-stack"></i><span>Cash on Delivery</span>
+            </div>
+          </div>
+
+          <!-- Share row -->
+          <div class="pv-share-row">
+            <span class="pv-share-lbl"><i class="bi bi-share"></i> Share:</span>
+            <a class="pv-share-btn" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode((isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']==='on'?'https':'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']) ?>" target="_blank" aria-label="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+            <button class="pv-share-btn" id="pvCopyBtn" title="Copy link" aria-label="Copy link">
+              <i class="bi bi-link-45deg"></i>
+            </button>
+          </div>
+
+          <!-- Description in left panel -->
+          <div class="pv-desc-panel">
+            <h3>Description</h3>
+            <?php if (!empty($product['description'])): ?>
+              <div class="pv-desc-body"><?= nl2br(htmlspecialchars($product['description'])) ?></div>
+            <?php else: ?>
+              <p class="pv-empty-note">No description available for this product.</p>
+            <?php endif; ?>
+          </div>
+
+        </div>
+        <!-- /left panel -->
+
+        <!-- ════ RIGHT  Gallery ════ -->
         <div class="pv-gallery" id="pvGallery">
 
           <!-- Discount ribbon -->
@@ -146,7 +263,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
               <button
                 class="pv-thumb <?= $i === 0 ? 'active' : '' ?>"
                 data-src="<?= htmlspecialchars($img) ?>"
-                aria-label="ছবি <?= $i + 1 ?>"
+                aria-label="Image <?= $i + 1 ?>"
               ><img src="upload/products/<?= htmlspecialchars($img) ?>" alt="" loading="lazy"></button>
             <?php endforeach; ?>
           </div>
@@ -154,141 +271,64 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
         </div>
         <!-- /gallery -->
 
-        <!-- ════ RIGHT  Info ════ -->
-        <div class="pv-info">
-
-          <!-- Category tag -->
-          <?php if ($product['cat_name']): ?>
-            <a class="pv-cat-tag" href="shop.php?category=<?= htmlspecialchars($product['cat_slug']) ?>">
-              <i class="bi bi-tag"></i> <?= htmlspecialchars($product['cat_name']) ?>
-            </a>
-          <?php endif; ?>
-
-          <!-- Title -->
-          <h1 class="pv-title"><?= htmlspecialchars($product['name']) ?></h1>
-
-          <!-- Views -->
-          <p class="pv-views"><i class="bi bi-eye"></i> <?= number_format($product['views']) ?> বার দেখা হয়েছে</p>
-
-          <!-- Price block -->
-          <div class="pv-price-block">
-            <span class="pv-price-final">৳<?= number_format($finalPrice, 0) ?></span>
-            <?php if ($hasDiscount): ?>
-              <span class="pv-price-orig">৳<?= number_format($product['price'], 0) ?></span>
-              <span class="pv-save-pill">৳<?= number_format($savings, 0) ?> সাশ্রয়</span>
-            <?php endif; ?>
-          </div>
-
-          <!-- Divider -->
-          <div class="pv-hr"></div>
-
-          <!-- ── Size picker ── -->
-          <?php if (!empty($sizes)): ?>
-          <div class="pv-option-row">
-            <label class="pv-opt-label">সাইজ <strong id="pvSizeLbl"></strong></label>
-            <div class="pv-size-wrap" id="pvSizeWrap">
-              <?php foreach ($sizes as $sz): ?>
-                <button class="pv-size-chip" data-val="<?= htmlspecialchars($sz) ?>"><?= htmlspecialchars($sz) ?></button>
-              <?php endforeach; ?>
-            </div>
-            <p class="pv-opt-hint" id="pvSizeErr" style="display:none">
-              <i class="bi bi-exclamation-circle"></i> একটি সাইজ বেছে নিন
-            </p>
-          </div>
-          <?php endif; ?>
-
-          <!-- ── Quantity ── -->
-          <div class="pv-option-row">
-            <label class="pv-opt-label">পরিমাণ</label>
-            <div class="pv-qty-box">
-              <button class="pv-qty-btn" id="pvQtyDec" aria-label="কমান"><i class="bi bi-dash-lg"></i></button>
-              <input type="number" class="pv-qty-inp" id="pvQtyInp" value="1" min="1" max="99" readonly>
-              <button class="pv-qty-btn" id="pvQtyInc" aria-label="বাড়ান"><i class="bi bi-plus-lg"></i></button>
-            </div>
-          </div>
-
-          <!-- ── Action buttons ── -->
-          <div class="pv-actions">
-            <button class="pv-btn-cart" id="pvBtnCart">
-              <i class="bi bi-bag-plus-fill"></i>
-              <span>কার্টে যোগ করুন</span>
-            </button>
-            <button class="pv-btn-buy" id="pvBtnBuy">
-              <i class="bi bi-lightning-charge-fill"></i>
-              <span>এখনই কিনুন</span>
-            </button>
-          </div>
-
-          <!-- ── Trust strip ── -->
-          <div class="pv-trust">
-            <div class="pv-trust-item">
-              <i class="bi bi-truck"></i><span>ফ্রি ডেলিভারি</span>
-            </div>
-            <div class="pv-trust-item">
-              <i class="bi bi-arrow-counterclockwise"></i><span>৭ দিনে রিটার্ন</span>
-            </div>
-            <div class="pv-trust-item">
-              <i class="bi bi-shield-fill-check"></i><span>অরিজিনাল পণ্য</span>
-            </div>
-            <div class="pv-trust-item">
-              <i class="bi bi-cash-stack"></i><span>ক্যাশ অন ডেলিভারি</span>
-            </div>
-          </div>
-
-          <!-- Share row -->
-          <div class="pv-share-row">
-            <span class="pv-share-lbl"><i class="bi bi-share"></i> শেয়ার করুন:</span>
-            <a class="pv-share-btn" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode((isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']==='on'?'https':'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']) ?>" target="_blank" aria-label="Facebook">
-              <i class="bi bi-facebook"></i>
-            </a>
-            <button class="pv-share-btn" id="pvCopyBtn" title="লিংক কপি করুন" aria-label="Copy link">
-              <i class="bi bi-link-45deg"></i>
-            </button>
-          </div>
-
-        </div>
-        <!-- /info -->
-
       </div><!-- /grid -->
     </div>
   </section>
 
-  <!-- ── Description tab ── -->
-  <section class="pv-desc-section">
+  <!-- ── Tabs Section ── -->
+  <section class="pv-tabs-section">
     <div class="pv-wrap">
       <div class="pv-tabs">
-        <button class="pv-tab active" data-panel="desc">বিবরণ</button>
-        <button class="pv-tab" data-panel="spec">তথ্য</button>
+        <button class="pv-tab active" data-panel="about">About</button>
+        <?php if (!empty($sizeGuide['value'])): ?>
+          <button class="pv-tab" data-panel="size">Size Guide</button>
+        <?php endif; ?>
+        <?php if (!empty($faqs)): ?>
+          <button class="pv-tab" data-panel="faq">FAQ</button>
+        <?php endif; ?>
         <span class="pv-tab-bar" id="pvTabBar"></span>
       </div>
 
-      <div class="pv-panel" id="pvPanelDesc">
-        <?php if (!empty($product['description'])): ?>
-          <div class="pv-desc-body"><?= nl2br(htmlspecialchars($product['description'])) ?></div>
-        <?php else: ?>
-          <p class="pv-empty-note">এই পণ্যের বিবরণ পাওয়া যায়নি।</p>
-        <?php endif; ?>
+      <!-- About Tab -->
+      <div class="pv-panel active" id="pvPanelAbout">
+        <div class="pv-panel-content">
+          <?php if (!empty($generalInfo['value'])): ?>
+            <div class="pv-general-info"><?= nl2br(htmlspecialchars($generalInfo['value'])) ?></div>
+          <?php else: ?>
+            <p class="pv-empty-note">General information not available.</p>
+          <?php endif; ?>
+        </div>
       </div>
 
-      <div class="pv-panel pv-panel-hidden" id="pvPanelSpec">
-        <table class="pv-spec-table">
-          <tbody>
-            <tr><th>নাম</th><td><?= htmlspecialchars($product['name']) ?></td></tr>
-            <?php if ($product['cat_name']): ?>
-            <tr><th>ক্যাটাগরি</th><td><?= htmlspecialchars($product['cat_name']) ?></td></tr>
-            <?php endif; ?>
-            <tr><th>মূল মূল্য</th><td>৳<?= number_format($product['price'], 2) ?></td></tr>
-            <?php if ($hasDiscount): ?>
-            <tr><th>ছাড়ের মূল্য</th><td>৳<?= number_format($product['discount_price'], 2) ?> <em>(<?= $discPct ?>% ছাড়)</em></td></tr>
-            <?php endif; ?>
-            <?php if (!empty($sizes)): ?>
-            <tr><th>উপলব্ধ সাইজ</th><td><?= htmlspecialchars(implode(', ', $sizes)) ?></td></tr>
-            <?php endif; ?>
-            <tr><th>পণ্য আইডি</th><td>#<?= $product['id'] ?></td></tr>
-            <tr><th>যোগ করা হয়েছে</th><td><?= date('d M Y', strtotime($product['created_at'])) ?></td></tr>
-          </tbody>
-        </table>
+      <!-- Size Guide Tab -->
+      <?php if (!empty($sizeGuide['value'])): ?>
+      <div class="pv-panel" id="pvPanelSize">
+        <div class="pv-panel-content">
+          <?= nl2br(htmlspecialchars($sizeGuide['value'])) ?>
+        </div>
       </div>
+      <?php endif; ?>
+
+      <!-- FAQ Tab -->
+      <?php if (!empty($faqs)): ?>
+      <div class="pv-panel" id="pvPanelFaq">
+        <div class="pv-faq-container">
+          <?php foreach ($faqs as $faq): ?>
+            <div class="pv-faq-item">
+              <button class="pv-faq-question">
+                <span><?= htmlspecialchars($faq['question']) ?></span>
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div class="pv-faq-answer">
+                <div class="pv-faq-answer-content">
+                  <?= nl2br(htmlspecialchars($faq['answer'])) ?>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <?php endif; ?>
     </div>
   </section>
 
@@ -296,7 +336,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
   <?php if (!empty($related)): ?>
   <section class="pv-related">
     <div class="pv-wrap">
-      <h2 class="pv-section-heading">একই ক্যাটাগরির পণ্য</h2>
+      <h2 class="pv-section-heading">Related Products</h2>
       <div class="pv-related-grid">
         <?php foreach ($related as $r):
           $rHasDisc = !empty($r['discount_price']) && (float)$r['discount_price'] < (float)$r['price'];
@@ -368,18 +408,25 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
   var tabBar    = document.getElementById('pvTabBar');
   var toast     = document.getElementById('pvToast');
   var copyBtn   = document.getElementById('pvCopyBtn');
+  var faqQuestions = document.querySelectorAll('.pv-faq-question');
 
   /* ══ Gallery ══ */
   function swapImage(src) {
     shimmer.style.opacity = '1';
     mainImg.style.opacity = '0';
+    var fullSrc = 'upload/products/' + src;
     var img = new Image();
     img.onload = function () {
-      mainImg.src = src;
+      mainImg.src = fullSrc;
       mainImg.style.opacity = '1';
       shimmer.style.opacity = '0';
     };
-    img.src = src;
+    img.onerror = function () {
+      mainImg.src = 'upload/products/image/placeholder.jpg';
+      mainImg.style.opacity = '1';
+      shimmer.style.opacity = '0';
+    };
+    img.src = fullSrc;
   }
 
   thumbs.forEach(function (btn) {
@@ -427,7 +474,6 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
     if (!validate()) return;
     document.getElementById('pvFSize').value = selSize;
     document.getElementById('pvFQty').value  = qty;
-    /* Submit form → cart.php */
     cartForm.action = 'cart.php';
     cartForm.submit();
   });
@@ -451,18 +497,38 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
       tabs.forEach(function (t) { t.classList.remove('active'); });
       tab.classList.add('active');
       moveBar(tab);
-      document.querySelectorAll('.pv-panel').forEach(function (p) { p.classList.add('pv-panel-hidden'); });
-      var panel = document.getElementById('pvPanel' + tab.dataset.panel.charAt(0).toUpperCase() + tab.dataset.panel.slice(1));
-      if (panel) panel.classList.remove('pv-panel-hidden');
+      document.querySelectorAll('.pv-panel').forEach(function (p) { p.classList.remove('active'); });
+      var panelId = 'pvPanel' + tab.dataset.panel.charAt(0).toUpperCase() + tab.dataset.panel.slice(1);
+      var panel = document.getElementById(panelId);
+      if (panel) panel.classList.add('active');
     });
   });
   var firstTab = document.querySelector('.pv-tab.active');
   if (firstTab) { setTimeout(function () { moveBar(firstTab); }, 30); }
 
+  /* ══ FAQ Accordion ══ */
+  faqQuestions.forEach(function (question) {
+    question.addEventListener('click', function () {
+      var item = this.closest('.pv-faq-item');
+      var answer = item.querySelector('.pv-faq-answer');
+      var isOpen = item.classList.contains('open');
+      
+      document.querySelectorAll('.pv-faq-item').forEach(function (q) {
+        q.classList.remove('open');
+        q.querySelector('.pv-faq-answer').style.maxHeight = '0';
+      });
+      
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
   /* ══ Copy link ══ */
   copyBtn && copyBtn.addEventListener('click', function () {
     navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(function () {
-      showToast('লিংক কপি হয়েছে!', 'ok');
+      showToast('Link copied!', 'ok');
     });
   });
 
@@ -478,4 +544,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
 })();
 </script>
 
-<?php require_once 'components/page_close.php'; ?>
+<?php 
+ob_end_flush(); // Flush output buffer
+require_once 'components/page_close.php'; 
+?>

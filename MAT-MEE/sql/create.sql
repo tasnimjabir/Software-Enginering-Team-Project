@@ -71,6 +71,7 @@ CREATE TABLE cart_items (
     size_id INT NULL,
     quantity INT DEFAULT 1,
     FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (size_id) REFERENCES sizes(id) ON DELETE SET NULL
 );
 
@@ -97,7 +98,9 @@ CREATE TABLE order_items (
     quantity INT,
     price_at_purchase DECIMAL(10,2),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (size_id) REFERENCES sizes(id) ON DELETE SET NULL
+);
 );
 
 CREATE TABLE metadata (
@@ -120,6 +123,18 @@ CREATE TABLE IF NOT EXISTS `carousel_slides` (
     `overlay_opacity`  DECIMAL(3,2)  NOT NULL DEFAULT '0.45',
     `overlay_color`    VARCHAR(20)   NOT NULL DEFAULT '#000000',
     `text_color`       VARCHAR(20)   NOT NULL DEFAULT '#ffffff',
+    `sort_order`       INT(5)        NOT NULL DEFAULT '0',
+    `is_active`        TINYINT(1)    NOT NULL DEFAULT '1',
+    `created_at`       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_active_order` (`is_active`, `sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `faqs` (
+    `id`               INT(11)       NOT NULL AUTO_INCREMENT,
+    `question`         VARCHAR(255)  NOT NULL,
+    `answer`           LONGTEXT      NOT NULL,
     `sort_order`       INT(5)        NOT NULL DEFAULT '0',
     `is_active`        TINYINT(1)    NOT NULL DEFAULT '1',
     `created_at`       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
