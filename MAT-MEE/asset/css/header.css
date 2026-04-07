@@ -6,7 +6,6 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 3px solid var(--primary-color);
 }
 
 .navbar {
@@ -82,9 +81,6 @@
 
 /* Tablet screens (sm) */
 @media (max-width: 767.98px) {
-    .brand-name {
-        display: none;
-    }
 
     .navbar {
         padding: 0.4rem 0;
@@ -107,10 +103,6 @@
 
     .navbar {
         padding: 0.35rem 0;
-    }
-
-    .brand-name {
-        display: none;
     }
 }
 

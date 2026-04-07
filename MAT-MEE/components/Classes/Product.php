@@ -12,7 +12,7 @@ class Product {
 
         $this->connection = DatabaseConnection::getInstance();
 
-        $this->sql = "SELECT p.id, p.name, p.slug, p.price, p.main_image, c.name as category 
+        $this->sql = "SELECT p.id, p.name, p.slug, p.price, p.discount_price, p.main_image, c.name as category 
                       FROM products p 
                       LEFT JOIN categories c ON p.category_id = c.id";
 

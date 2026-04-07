@@ -53,6 +53,8 @@ class DatabaseConnection {
 
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
+        
+        $this->error = $stmt->error;
 
         return $stmt->get_result();
     }
@@ -71,11 +73,34 @@ class DatabaseConnection {
     }
 
     public function execute($query, $params = []) {
-        $result = $this->prepareAndExecute($query, $params);
+        if (empty($params)) {
+            $result = $this->connection->query($query);
+            if ($result === false) {
+                $this->error = $this->connection->error;
+                return false;
+            }
+            return $this->connection->affected_rows;
+        }
+        
+        $stmt = $this->connection->prepare($query);
+        if (!$stmt) {
+            $this->error = $this->connection->error;
+            return false;
+        }
 
-        if ($result === false) return false;
+        $types = '';
+        foreach ($params as $p) {
+            $types .= is_int($p) ? 'i' : (is_float($p) ? 'd' : 's');
+        }
 
-        return $this->connection->affected_rows;
+        $stmt->bind_param($types, ...$params);
+        if (!$stmt->execute()) {
+            $this->error = $stmt->error;
+            return false;
+        }
+        
+        $this->error = $stmt->error;
+        return $stmt->affected_rows >= 0 ? $stmt->affected_rows : true;
     }
 
     public function lastId() {

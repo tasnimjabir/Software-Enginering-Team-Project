@@ -4,7 +4,13 @@
  * Path: MAT-MEE/Admin-matmee/carousel.php
  */
 
-include 'header.php';
+include 'header.php';?>
+<body>
+	<div class="admin-wrapper">
+
+		<div class="layout">
+			<?php include 'sidebar.php'; ?>
+        <?php
 
 /* ─────────────────────────────────────────────────────────────
    HELPERS
@@ -123,23 +129,47 @@ $slidesJson = json_encode(array_values($slides), JSON_HEX_TAG | JSON_HEX_AMP);
 <link rel="stylesheet" href="carousel_admin.css">
 <main class="content cm-page">
 
-<!-- TOP BAR -->
-<div class="cm-topbar">
-    <div class="cm-topbar-left">
-        <i class="bi bi-images"></i>
-        <div><h1>Carousel Manager</h1><p>Manage homepage slider</p></div>
-    </div>
-    <a href="carousel.php?new=1" class="cm-btn cm-btn-primary">
-        <i class="bi bi-plus-lg"></i> New Slide
-    </a>
-</div>
-
 <?php if ($flash): ?>
 <div class="cm-flash cm-flash-<?= $flashType==='err'?'err':'ok' ?>" id="flashMsg">
     <i class="bi bi-<?= $flashType==='err'?'exclamation-triangle-fill':'check-circle-fill' ?>"></i>
     <?= htmlspecialchars($flash) ?>
 </div>
 <?php endif; ?>
+
+
+
+<!-- WORKSPACE -->
+<div class="cm-workspace">
+
+    <!-- PREVIEW COLUMN -->
+    <div class="cm-prev-col">
+        <div class="cm-prev-bar">
+            <i class="bi bi-display"></i>
+            <span>Live Preview</span>
+            <span class="cm-prev-ratio-tag">Carousel Manager</span>
+        </div>
+
+        <!-- 16:9 preview -->
+        <div class="cm-prev-outer">
+            <div class="cm-prev-wrap sticky-top" id="prevWrap">
+                <div class="cm-prev-bg"      id="prevBg"></div>
+                <div class="cm-prev-overlay" id="prevOv"></div>
+                <div class="cm-prev-stripe"></div>
+                <div class="cm-prev-content" id="prevContent">
+                    <div class="cm-prev-text" id="prevText">
+                        <div class="cm-prev-title" id="prevTitle"></div>
+                        <div class="cm-prev-sub"   id="prevSub"></div>
+                        <div class="mm-btns">
+                            <a class="mm-btn-outline">সব পণ্য দেখুন</a>
+                            <div class="cm-prev-btn"   id="prevBtn"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cm-prev-ph" id="prevPh">
+                    <i class="bi bi-image"></i><span>No image</span>
+                </div>
+            </div>
+        </div>
 
 <!-- FILMSTRIP -->
 <div class="cm-strip-wrap">
@@ -159,39 +189,11 @@ $slidesJson = json_encode(array_values($slides), JSON_HEX_TAG | JSON_HEX_AMP);
             </div>
         <?php endforeach; endif; ?>
     </div>
+    <a href="carousel.php?new=1" class="cm-btn cm-btn-primary" style="margin:10px;">
+        <i class="bi bi-plus-lg"></i>
+    </a>
     <button class="cm-strip-arrow" id="stripR" type="button"><i class="bi bi-chevron-right"></i></button>
 </div>
-
-<!-- WORKSPACE -->
-<div class="cm-workspace">
-
-    <!-- PREVIEW COLUMN -->
-    <div class="cm-prev-col">
-        <div class="cm-prev-bar">
-            <i class="bi bi-display"></i>
-            <span>Live Preview</span>
-            <span class="cm-prev-ratio-tag">Matches front-end carousel</span>
-        </div>
-
-        <!-- 16:9 preview -->
-        <div class="cm-prev-outer">
-            <div class="cm-prev-wrap" id="prevWrap">
-                <div class="cm-prev-bg"      id="prevBg"></div>
-                <div class="cm-prev-overlay" id="prevOv"></div>
-                <div class="cm-prev-stripe"></div>
-                <div class="cm-prev-content" id="prevContent">
-                    <div class="cm-prev-text" id="prevText">
-                        <div class="cm-prev-title" id="prevTitle"></div>
-                        <div class="cm-prev-sub"   id="prevSub"></div>
-                        <div class="cm-prev-btn"   id="prevBtn"></div>
-                    </div>
-                </div>
-                <div class="cm-prev-ph" id="prevPh">
-                    <i class="bi bi-image"></i><span>No image</span>
-                </div>
-            </div>
-        </div>
-
         <!-- Bottom bar -->
         <div class="cm-prev-foot">
             <div class="cm-prev-nav">
@@ -400,6 +402,9 @@ $slidesJson = json_encode(array_values($slides), JSON_HEX_TAG | JSON_HEX_AMP);
     </div>
 
 </div><!-- /cm-workspace -->
+</div><!-- /layout -->
+</div><!-- /admin-wrapper -->
+</body>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -515,8 +520,8 @@ function renderPreview(d) {
     prevSub.style.display  = d.subtitle ? '' : 'none';
 
     if (d.button_text) {
-        prevBtn.textContent = d.button_text;
-        prevBtn.style.cssText = `display:inline-flex;color:${tc};border-color:${tc}`;
+        prevBtn.innerHTML = d.button_text + '<i class="bi bi-arrow-right"></i>';
+        // prevBtn.style.cssText = `display:inline-flex;color:${tc};border-color:${tc}`;
     } else {
         prevBtn.style.display = 'none';
     }

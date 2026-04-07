@@ -6,7 +6,7 @@
 :root {
     --mm-red:    #800000;
     --mm-red-dk: #991b1b;
-    --mm-gold:   #3d3c39;
+    --mm-gold:   var(--primary-color);
     --mm-ch:     66vh;
     --mm-cmin:   480px;
 }
@@ -147,7 +147,7 @@
 }
 @media (max-width:576px) {
     :root { --mm-ch:54vh; --mm-cmin:270px; }
-    .mm-slide-content { padding:40px 28px; }
+    .mm-slide-content { padding:40px 48px; }
     .mm-arrow  { width:36px; height:36px; font-size:0.9rem; }
     .mm-prev   { left:6px; }
     .mm-next   { right:6px; }

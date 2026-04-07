@@ -76,11 +76,11 @@ function hexToRgba(string $hex, float $a): string {
 
                     <?php if (!empty($s['button_text']) && !empty($s['button_link'])): ?>
                     <div class="mm-btns">
+                        <a href="products.php" class="mm-btn-outline" style = "color:<?= $color ?>; border-color:<?= $color ?>">সব পণ্য দেখুন</a>
                         <a href="<?= htmlspecialchars($s['button_link']) ?>" class="mm-btn-primary">
                             <?= htmlspecialchars($s['button_text']) ?>
                             <i class="bi bi-arrow-right"></i>
                         </a>
-                        <a href="products.php" class="mm-btn-outline">সব পণ্য দেখুন</a>
                     </div>
                     <?php endif; ?>
 
@@ -166,8 +166,8 @@ function hexToRgba(string $hex, float $a): string {
     });
 
     /* Pause on hover */
-    wrap.addEventListener('mouseenter', () => { clearInterval(timer); if (fill) fill.style.transition='none'; });
-    wrap.addEventListener('mouseleave', () => { startAuto(); resetProgress(); });
+    // wrap.addEventListener('mouseenter', () => { clearInterval(timer); if (fill) fill.style.transition='none'; });
+    // wrap.addEventListener('mouseleave', () => { startAuto(); resetProgress(); });
 
     startAuto();
     resetProgress();

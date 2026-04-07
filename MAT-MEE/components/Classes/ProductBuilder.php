@@ -1,4 +1,5 @@
 <?php
+$base_url = isset($base_url) ? $base_url : '';
 require_once $base_url.'components/config-component.php';
 require_once 'Product.php';
 class ProductBuilder {
