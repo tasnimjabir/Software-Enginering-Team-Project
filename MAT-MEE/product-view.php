@@ -108,6 +108,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
 ?>
 
 <link rel="stylesheet" href="asset/css/product.css">
+<link href="https://cdn.quilljs.com/1.3.6/quill.core.css" rel="stylesheet">
 
 <!-- ░░░ PAGE ░░░ -->
 <div class="pv-page">
@@ -145,15 +146,21 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
           <!-- Title -->
           <h1 class="pv-title"><?= htmlspecialchars($product['name']) ?></h1>
 
-          <!-- Views -->
-          <p class="pv-views"><i class="bi bi-eye"></i> <?= number_format($product['views']) ?> views</p>
-
           <!-- Price block -->
           <div class="pv-price-block">
             <span class="pv-price-final">৳<?= number_format($finalPrice, 0) ?></span>
             <?php if ($hasDiscount): ?>
               <span class="pv-price-orig">৳<?= number_format($product['price'], 0) ?></span>
               <span class="pv-save-pill">Save ৳<?= number_format($savings, 0) ?></span>
+            <?php endif; ?>
+          </div>
+
+          <!-- Description right after price -->
+          <div class="pv-desc-inline">
+            <?php if (!empty($product['description'])): ?>
+              <div class="pv-desc-body"><?= nl2br(htmlspecialchars($product['description'])) ?></div>
+            <?php else: ?>
+              <p class="pv-empty-note">No description available for this product.</p>
             <?php endif; ?>
           </div>
 
@@ -224,15 +231,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
             </button>
           </div>
 
-          <!-- Description in left panel -->
-          <div class="pv-desc-panel">
-            <h3>Description</h3>
-            <?php if (!empty($product['description'])): ?>
-              <div class="pv-desc-body"><?= nl2br(htmlspecialchars($product['description'])) ?></div>
-            <?php else: ?>
-              <p class="pv-empty-note">No description available for this product.</p>
-            <?php endif; ?>
-          </div>
+
 
         </div>
         <!-- /left panel -->
@@ -293,7 +292,7 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
       <div class="pv-panel active" id="pvPanelAbout">
         <div class="pv-panel-content">
           <?php if (!empty($generalInfo['value'])): ?>
-            <div class="pv-general-info"><?= nl2br(htmlspecialchars($generalInfo['value'])) ?></div>
+            <div class="pv-general-info ql-editor" style="padding:10px;overflow-y:hidden;"><?= $generalInfo['value'] ?></div>
           <?php else: ?>
             <p class="pv-empty-note">General information not available.</p>
           <?php endif; ?>
@@ -303,8 +302,8 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
       <!-- Size Guide Tab -->
       <?php if (!empty($sizeGuide['value'])): ?>
       <div class="pv-panel" id="pvPanelSize">
-        <div class="pv-panel-content">
-          <?= nl2br(htmlspecialchars($sizeGuide['value'])) ?>
+        <div class="pv-panel-content ql-editor" style="padding:10px;overflow-y:hidden;">
+          <?= $sizeGuide['value'] ?>
         </div>
       </div>
       <?php endif; ?>
@@ -320,8 +319,8 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
                 <i class="bi bi-chevron-down"></i>
               </button>
               <div class="pv-faq-answer">
-                <div class="pv-faq-answer-content">
-                  <?= nl2br(htmlspecialchars($faq['answer'])) ?>
+                <div class="pv-faq-answer-content ql-editor" style="padding:10px;overflow-y:hidden;white-space:nowrap;">
+                  <?= $faq['answer'] ?>
                 </div>
               </div>
             </div>

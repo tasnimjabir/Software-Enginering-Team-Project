@@ -43,6 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php include 'sidebar.php'; ?>
 
         <main class="content">
+            <!-- Include Quill stylesheet -->
+            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+            <style>
+                .ql-editor { min-height: 200px; font-size: 1rem; }
+                .ql-toolbar { background: #fdfdfd; }
+            </style>
 
             <!-- Header Row -->
             <div class="products-header">
@@ -59,45 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="card">
-                <div class="card-body">
-                    <form method="POST" novalidate style="display:grid; gap:2rem;">
+                <div class="card-body" style="background:#f9f9f9;">
+                    <form method="POST" novalidate style="display:flex;gap:2rem;flex-direction:column;">
                         
                         <!-- General Information Section -->
                         <div>
-                            <label class="form-label" style="display:block; font-weight:700; margin-bottom:0.5rem; color:#333; font-size:1rem;">
+                            <label class="form-label" style="display:block;">
                                 General Information
                             </label>
                             <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">
                                 This text appears in the "About" tab on all product pages
                             </p>
-                            <textarea 
-                                name="general_info" 
-                                class="form-input" 
-                                rows="7"
-                                placeholder="Enter general product information here... (supports line breaks)"
-                                style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:0.95rem; font-family:inherit; resize:vertical;"
-                            ><?= htmlspecialchars($generalInfo['value'] ?? '') ?></textarea>
-                            <small style="color:#999; display:block; margin-top:0.5rem;">💡 Use clear, customer-friendly language</small>
+                            <input type="hidden" name="general_info" id="general_info_input">
+                            <div id="general_info_editor" style="background: #fff; border-radius: 0 0 6px 6px;"><?= $generalInfo['value'] ?? '' ?></div>
+                            <small style="color:#999; display:block; margin-top:0.5rem;"><i class="bi bi-info-circle"></i> Use clear, customer-friendly language</small>
                         </div>
 
                         <hr style="border:none; border-top:1px solid var(--border-color); margin:0.5rem 0;">
 
                         <!-- Size Guide Section -->
                         <div>
-                            <label class="form-label" style="display:block; font-weight:700; margin-bottom:0.5rem; color:#333; font-size:1rem;">
+                            <label class="form-label" style="display:block;">
                                 Size Guide
                             </label>
                             <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">
                                 This text appears in the "Size Guide" tab on product pages (leave empty to hide the tab)
                             </p>
-                            <textarea 
-                                name="size_guide" 
-                                class="form-input" 
-                                rows="7"
-                                placeholder="Enter size guide information here... (e.g., measurements, fit tips, etc.)"
-                                style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:0.95rem; font-family:inherit; resize:vertical;"
-                            ><?= htmlspecialchars($sizeGuide['value'] ?? '') ?></textarea>
-                            <small style="color:#999; display:block; margin-top:0.5rem;">💡 Include size measurements and fitting advice</small>
+                            <input type="hidden" name="size_guide" id="size_guide_input">
+                            <div id="size_guide_editor" style="background: #fff; border-radius: 0 0 6px 6px;"><?= $sizeGuide['value'] ?? '' ?></div>
+                            <small style="color:#999; display:block; margin-top:0.5rem;"><i class="bi bi-info-circle"></i> Include size measurements and fitting advice</small>
                         </div>
 
                         <!-- Action Buttons -->
@@ -113,20 +109,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
             </div>
-
-            <!-- Help Information -->
-            <div class="alert success" style="margin-top:2rem; background:#f0f7ff; border-left:4px solid #2196f3; padding:1.25rem; color:#1565c0;">
-                <strong style="font-size:1rem;">ℹ️ How This Works:</strong>
-                <ul style="margin:0.75rem 0 0; padding-left:1.5rem; color:#555; line-height:1.8;">
-                    <li><strong>General Information</strong> - Shows to all customers in the About tab</li>
-                    <li><strong>Size Guide</strong> - Shows help customers pick correct size; leave blank to hide</li>
-                    <li>Changes appear immediately on all product pages</li>
-                    <li>Use line breaks for better readability</li>
-                </ul>
+            <div style="margin-top: 1.5rem;">
+                <a href="faqs.php" class="btn btn-secondary" style="padding:0.75rem 2rem; border-radius:6px; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; background-color: #132323;">
+                    <i class="bi bi-question-circle"></i> Manage FAQs
+                </a>
             </div>
-
         </main>
     </div>
 </div>
+<style>
+    .form-label{
+        color:#333;
+    }
+</style>
+
+<!-- Quill initialization -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean']
+    ];
+
+    var quillGeneral = new Quill('#general_info_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+
+    var quillSize = new Quill('#size_guide_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        document.querySelector('#general_info_input').value = quillGeneral.root.innerHTML;
+        document.querySelector('#size_guide_input').value = quillSize.root.innerHTML;
+    };
+</script>
 </body>
 </html>

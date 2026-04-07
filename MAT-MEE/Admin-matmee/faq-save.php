@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $question = trim($_POST['question'] ?? '');
     $answer = trim($_POST['answer'] ?? '');
     $sort_order = (int)($_POST['sort_order'] ?? 0);
-    $is_active = (int)($_POST['is_active'] ?? 1);
+    $is_active = isset($_POST['is_active']) ? 1 : 0;
 
     if (empty($question)) {
         $errorMsg = 'Question is required.';
@@ -65,12 +65,22 @@ $pageTitle = $id > 0 ? 'Edit FAQ' : 'Add New FAQ';
 
         <main class="content">
 
+            <!-- Include Quill stylesheet -->
+            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+            <style>
+                .ql-editor { min-height: 200px; font-size: 1rem; }
+                .ql-toolbar { background: #fdfdfd; }
+            </style>
+
             <!-- Header Row -->
-            <div class="products-header">
+            <div class="products-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <div>
                     <h1 class="page-title"><?= $pageTitle ?></h1>
                     <p class="page-sub">Manage frequently asked questions</p>
                 </div>
+                <a href="faqs.php" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; padding:0.5rem 1rem; border-radius:6px;">
+                    <i class="bi bi-arrow-left"></i> Back to FAQs
+                </a>
             </div>
 
             <?php if ($errorMsg): ?>
@@ -82,7 +92,7 @@ $pageTitle = $id > 0 ? 'Edit FAQ' : 'Add New FAQ';
             <!-- Form Card -->
             <div class="card">
                 <div class="card-body">
-                    <form method="POST" novalidate style="display:grid; gap:1.5rem;">
+                    <form method="POST" novalidate style="display:flex; flex-direction:column; gap:1.5rem;">
                         
                         <!-- Question Input -->
                         <div>
@@ -105,15 +115,9 @@ $pageTitle = $id > 0 ? 'Edit FAQ' : 'Add New FAQ';
                             <label class="form-label" style="display:block; font-weight:600; margin-bottom:0.5rem; color:#333;">
                                 Answer <span style="color:#f44336;">*</span>
                             </label>
-                            <textarea 
-                                name="answer" 
-                                class="form-input" 
-                                rows="8" 
-                                placeholder="Enter the FAQ answer here..." 
-                                required
-                                style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1rem; font-family:inherit; resize:vertical;"
-                            ><?= htmlspecialchars($faq['answer'] ?? '') ?></textarea>
-                            <small style="color:#666; display:block; margin-top:0.25rem;">Supports line breaks - press Enter for new lines</small>
+                            <input type="hidden" name="answer" id="answer_input">
+                            <div id="answer_editor" style="background: #fff; border-radius: 0 0 6px 6px;"><?= $faq['answer'] ?? '' ?></div>
+                            <small style="color:#666; display:block; margin-top:0.25rem;">Supports dynamic formatting</small>
                         </div>
 
                         <!-- Two Column Section -->
@@ -166,19 +170,45 @@ $pageTitle = $id > 0 ? 'Edit FAQ' : 'Add New FAQ';
                 </div>
             </div>
 
-            <!-- Help Box -->
-            <div class="alert success" style="margin-top:1.5rem; background:#e8f5e9; border-left:4px solid #66bb6a; padding:1rem;">
-                <strong style="color:#2e7d32;">Tips:</strong>
-                <ul style="margin:0.5rem 0 0; padding-left:1.5rem; color:#555;">
-                    <li>Make questions clear and specific</li>
-                    <li>Provide helpful, detailed answers</li>
-                    <li>Use common customer questions</li>
-                    <li>Set sort order to control display order</li>
-                </ul>
-            </div>
-
         </main>
     </div>
 </div>
+
+<!-- Quill initialization -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean']
+    ];
+
+    var quillAnswer = new Quill('#answer_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        var answerHTML = quillAnswer.root.innerHTML;
+        // If content is just blank, clear it so PHP validation triggers
+        if (quillAnswer.getText().trim().length === 0 && !answerHTML.includes('<img')) {
+            answerHTML = '';
+        }
+        document.querySelector('#answer_input').value = answerHTML;
+    };
+</script>
 </body>
 </html>

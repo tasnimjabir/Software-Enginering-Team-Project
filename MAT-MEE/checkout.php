@@ -113,7 +113,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ob_end_flush();
 ?>
 
-<section class="container py-5">
+<style>
+/* Checkout Styles */
+.checkout-page .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+.checkout-page .card-header {
+    background-color: transparent !important;
+    border-bottom: 2px solid #f1f3f5;
+    padding: 1.5rem;
+    color: #333 !important;
+}
+.checkout-page .card-header h5 {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.2px;
+}
+.form-control-modern {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    background-color: #fafbfc;
+}
+.form-control-modern:focus {
+    background-color: #fff;
+    border-color: #800000;
+    box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.08);
+    outline: none;
+}
+.form-label-modern {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+.order-summary-item {
+    transition: background-color 0.2s ease;
+}
+.order-summary-item:hover {
+    background-color: #f8f9fa;
+}
+.btn-place-order {
+    background-color: #800000;
+    border-color: #800000;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2);
+    color: #fff;
+}
+.btn-place-order:hover {
+    background-color: #990000;
+    border-color: #990000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(128, 0, 0, 0.3);
+    color: #fff;
+}
+.checkout-summary-box {
+    background: #fdfdfd;
+}
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<section class="container py-5 checkout-page">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <h1 class="mb-4">Checkout</h1>
@@ -126,47 +202,47 @@ ob_end_flush();
             <?php endif; ?>
 
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-7 fade-in-up stagger-1">
                     <div class="card mb-4">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">📍 Shipping & Contact Information</h5>
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt pe-2 text-danger"></i> Shipping & Contact Information</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <form method="POST" novalidate>
                                 <div class="mb-3">
-                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="customer_name" class="form-control" required value="<?= htmlspecialchars($_POST['customer_name'] ?? '') ?>" placeholder="Enter your full name">
+                                    <label class="form-label-modern">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="customer_name" class="form-control form-control-modern" required value="<?= htmlspecialchars($_POST['customer_name'] ?? '') ?>" placeholder="Enter your full name">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                                    <input type="email" name="customer_email" class="form-control" required value="<?= htmlspecialchars($_POST['customer_email'] ?? '') ?>" placeholder="your@email.com">
+                                    <label class="form-label-modern">Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" name="customer_email" class="form-control form-control-modern" required value="<?= htmlspecialchars($_POST['customer_email'] ?? '') ?>" placeholder="your@email.com">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                    <input type="tel" name="phone" class="form-control" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>" placeholder="01700000000">
+                                    <label class="form-label-modern">Phone Number <span class="text-danger">*</span></label>
+                                    <input type="tel" name="phone" class="form-control form-control-modern" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>" placeholder="01700000000">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Shipping Address <span class="text-danger">*</span></label>
-                                    <textarea name="shipping_address" class="form-control" rows="4" required placeholder="House no., Road, Area, City"><?= htmlspecialchars($_POST['shipping_address'] ?? '') ?></textarea>
+                                    <label class="form-label-modern">Shipping Address <span class="text-danger">*</span></label>
+                                    <textarea name="shipping_address" class="form-control form-control-modern" rows="4" required placeholder="House no., Road, Area, City"><?= htmlspecialchars($_POST['shipping_address'] ?? '') ?></textarea>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Additional Notes (Optional)</label>
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="e.g., Call before delivery, special instructions, etc."><?= htmlspecialchars($_POST['notes'] ?? '') ?></textarea>
+                                <div class="mb-4">
+                                    <label class="form-label-modern">Additional Notes (Optional)</label>
+                                    <textarea name="notes" class="form-control form-control-modern" rows="3" placeholder="e.g., Call before delivery, special instructions, etc."><?= htmlspecialchars($_POST['notes'] ?? '') ?></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-success btn-lg w-100">
-                                    <i class="bi bi-check-circle"></i> Place Order
+                                <button type="submit" class="btn-place-order d-block w-100">
+                                    <i class="bi bi-check2-circle me-1"></i> Place Order
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-5">
-                    <div class="card sticky-top" style="top: 20px;">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">📦 Order Summary</h5>
+                <div class="col-lg-5 fade-in-up stagger-2">
+                    <div class="card checkout-summary-box sticky-top" style="top: 20px;">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-box-seam pe-2 text-primary"></i> Order Summary</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <div class="mb-3 pb-3 border-bottom">
                                 <div class="fs-6 fw-semibold mb-2">Items in Order:</div>
                                 <ul class="list-group list-group-flush">
@@ -201,8 +277,12 @@ ob_end_flush();
                                 <span class="fw-bold text-success">৳<?= number_format($grandTotal, 0) ?></span>
                             </div>
 
-                            <div class="alert alert-light mt-3 mb-0">
-                                <small><i class="bi bi-info-circle"></i> Cash on Delivery (COD) Available</small>
+                            <div class="alert mt-4 py-3" style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:8px; display:flex; align-items:center; gap:10px;">
+                                <i class="bi bi-wallet2 fs-4 text-secondary"></i>
+                                <div>
+                                    <p class="mb-0 fw-semibold text-dark">Cash on Delivery (COD)</p>
+                                    <small class="text-muted">Pay when you receive your order.</small>
+                                </div>
                             </div>
                         </div>
                     </div>

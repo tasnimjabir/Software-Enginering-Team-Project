@@ -29,7 +29,7 @@ class UserProducts extends Product {
             ?>
             <div class="row g-2">
                 <?php foreach ($productsToDisplay as $product): ?>
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="col-sm-6 col-md-4 col-xxl-3">
                         <a href="product-view.php?id=<?php echo $product['id']; ?>" class="product-card-link">
                             <div class="product-card">
                                 <div class="product-image">

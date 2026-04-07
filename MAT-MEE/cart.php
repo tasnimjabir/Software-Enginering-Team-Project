@@ -101,10 +101,116 @@ foreach ($cartItems as $item) {
 }
 ?>?>
 
-<section class="container py-5">
+<style>
+/* Modern Minimalist Cart Styles */
+.modern-cart .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.modern-cart .table > :not(caption) > * > * {
+    border-bottom-color: #f1f3f5;
+    padding: 1.5rem 1rem;
+}
+.modern-cart .table-light th {
+    background-color: #fafbfc;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border: none;
+}
+.cart-item-row {
+    transition: background-color 0.2s ease;
+}
+.cart-item-row:hover {
+    background-color: #fcfcfc;
+}
+.item-img-wrap {
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.item-img-wrap img {
+    transition: transform 0.5s ease;
+}
+.item-img-wrap:hover img {
+    transform: scale(1.08);
+}
+.btn-remove-modern {
+    color: #dc3545;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.btn-remove-modern:hover {
+    background: #fff5f5;
+    border-color: #ffc9c9;
+}
+.cart-summary-card {
+    background: linear-gradient(145deg, #ffffff, #fdfdfd);
+}
+.btn-checkout-modern {
+    background-color: #800000;
+    border-color: #800000;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2);
+    color: #fff;
+}
+.btn-checkout-modern:hover {
+    background-color: #990000;
+    border-color: #990000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(128, 0, 0, 0.3);
+    color: #fff;
+}
+.btn-continue-modern {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #495057;
+    border-color: #dee2e6;
+}
+.btn-continue-modern:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+    transform: translateY(-2px);
+}
+.qty-input-modern {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    max-width: 80px;
+    transition: box-shadow 0.2s ease;
+}
+.qty-input-modern:focus {
+    border-color: #800000;
+    box-shadow: 0 0 0 0.2rem rgba(128,0,0,0.1);
+    outline: none;
+}
+/* Fade in animation */
+.fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<section class="container py-5 modern-cart fade-in-up">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <h1 class="mb-4">🛒 Shopping Cart</h1>
+            <h1 class="mb-4"><i class="bi bi-cart"></i> Shopping Cart</h1>
 
             <?php if ($successMessage): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -147,7 +253,9 @@ foreach ($cartItems as $item) {
                             <tr>
                                 <td class="align-middle">
                                     <div class="d-flex align-items-center gap-3">
-                                        <img src="upload/products/<?= htmlspecialchars($item['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($item['name']) ?>" width="60" height="60" class="rounded" style="object-fit: cover;">
+                                        <div class="item-img-wrap flex-shrink-0" style="width: 60px; height: 60px;">
+                                            <img src="upload/products/<?= htmlspecialchars($item['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-100 h-100" style="object-fit: cover;">
+                                        </div>
                                         <div>
                                             <a href="product-view.php?id=<?= $item['product_id'] ?>" class="text-decoration-none fw-semibold text-dark"><?= htmlspecialchars($item['name']) ?></a>
                                         </div>
@@ -160,7 +268,7 @@ foreach ($cartItems as $item) {
                                         <div class="input-group input-group-sm" style="width: 120px; margin: 0 auto;">
                                             <input type="hidden" name="action" value="update">
                                             <input type="hidden" name="item_id" value="<?= $item['cart_item_id'] ?>">
-                                            <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="0" max="99" class="form-control form-control-sm text-center" onchange="this.form.submit()">
+                                            <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="0" max="99" class="form-control form-control-sm text-center qty-input-modern" onchange="this.form.submit()">
                                         </div>
                                     </form>
                                 </td>
@@ -169,7 +277,7 @@ foreach ($cartItems as $item) {
                                     <form method="POST" class="d-inline" onsubmit="return confirm('Remove this item?');">
                                         <input type="hidden" name="action" value="remove">
                                         <input type="hidden" name="item_id" value="<?= $item['cart_item_id'] ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                        <button type="submit" class="btn-remove-modern">Remove</button>
                                     </form>
                                 </td>
                             </tr>
@@ -182,16 +290,16 @@ foreach ($cartItems as $item) {
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="shop.php" class="btn btn-outline-secondary w-100">← Continue Shopping</a>
+                                <a href="shop.php" class="btn btn-continue-modern w-100 text-decoration-none d-block text-center py-2">← Continue Shopping</a>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-grid">
-                                    <div class="card" style="background-color: #f9f9f9;">
-                                        <div class="card-body">
-                                            <p class="mb-2 text-muted">Subtotal:</p>
-                                            <p class="fs-4 fw-bold">৳<?= number_format($cartTotal, 0) ?></p>
-                                            <small class="text-muted">Shipping will be added at checkout</small>
-                                            <a href="checkout.php" class="btn btn-success btn-lg w-100 mt-3">Proceed to Checkout →</a>
+                                    <div class="card cart-summary-card">
+                                        <div class="card-body p-4">
+                                            <p class="mb-2 text-muted fw-semibold">Subtotal:</p>
+                                            <p class="fs-3 fw-bold text-dark">৳<?= number_format($cartTotal, 0) ?></p>
+                                            <small class="text-muted d-block mb-4">Shipping and taxes calculated at checkout.</small>
+                                            <a href="checkout.php" class="btn btn-checkout-modern btn-lg d-block w-100">Proceed to Checkout →</a>
                                         </div>
                                     </div>
                                 </div>

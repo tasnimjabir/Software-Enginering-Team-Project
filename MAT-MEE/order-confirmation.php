@@ -27,42 +27,160 @@ $orderItems = $conn->fetch(
 $page_title = 'Order Confirmation - #' . $orderId;
 ?>
 
-<section class="container py-5">
+<style>
+/* Confirmation Styles */
+.confirm-page .card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+.success-banner {
+    background: linear-gradient(135deg, #760000 0%, #022800 100%) !important;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+.success-banner::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="rgba(255,255,255,0.04)"/></svg>');
+    z-index: 1;
+}
+.success-banner > div {
+    position: relative;
+    z-index: 2;
+}
+.check-icon-wrap {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: 0.2s;
+    backdrop-filter: blur(4px);
+}
+.confirm-page .card-header {
+    background-color: #fff !important;
+    border-bottom: 2px solid #f1f3f5;
+    padding: 1.5rem;
+}
+.confirm-page .card-header h5 {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.1rem;
+    letter-spacing: -0.2px;
+}
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+.info-value {
+    font-weight: 600;
+    color: #212529;
+}
+.action-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+.btn-primary-custom {
+    background-color: #800000;
+    border-color: #800000;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(128,0,0,0.2);
+}
+.btn-primary-custom:hover {
+    background-color: #990000;
+    border-color: #990000;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(128,0,0,0.3);
+}
+.btn-outline-custom {
+    border: 1.5px solid #e9ecef;
+    color: #495057;
+    background: transparent;
+}
+.btn-outline-custom:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+    transform: translateY(-2px);
+    border-color: #dee2e6;
+}
+.table > :not(caption) > * > * {
+    padding: 1rem 0.5rem;
+    border-bottom-color: #f1f3f5;
+}
+.fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<section class="container py-5 confirm-page">
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <!-- Success Header -->
-            <div class="card border-success mb-4">
-                <div class="card-body text-center py-5" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">✓</div>
-                    <h1 class="card-title">Order Placed Successfully!</h1>
-                    <p class="lead mb-0">Thank you for your purchase</p>
+            <div class="card mb-4 fade-in-up">
+                <div class="card-body text-center py-5 success-banner">
+                    <div>
+                        <div class="check-icon-wrap"><i class="bi bi-check-lg"></i></div>
+                        <h1 class="card-title fw-bold">Order Placed Successfully!</h1>
+                        <p class="lead mb-0 text-white-50">Thank you for your purchase</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Order ID -->
-            <div class="card mb-4">
-                <div class="card-body">
+            <div class="card mb-4 fade-in-up stagger-1">
+                <div class="card-body p-4">
                     <div class="row text-center">
-                        <div class="col-md-6">
-                            <div>
-                                <small class="text-muted">ORDER ID</small>
-                                <p class="fs-3 fw-bold text-primary">#<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></p>
-                            </div>
+                        <div class="col-md-6 border-end-md border-light">
+                            <div class="info-label">Order Number</div>
+                            <div class="fs-3 fw-bold" style="color: #800000;">#<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></div>
                         </div>
-                        <div class="col-md-6">
-                            <div>
-                                <small class="text-muted">ORDER DATE</small>
-                                <p class="fs-5 fw-semibold"><?= date('d M Y, h:i A', strtotime($order['created_at'])) ?></p>
-                            </div>
+                        <div class="col-md-6 border-end-md border-light">
+                            <div class="info-label">Order Date</div>
+                            <div class="fs-5 info-value"><?= date('d M Y, h:i A', strtotime($order['created_at'])) ?></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Order Items -->
-            <div class="card mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Order Items</h5>
+            <div class="card mb-4 fade-in-up stagger-2">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-box-seam pe-2"></i> Order Items</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -98,11 +216,11 @@ $page_title = 'Order Confirmation - #' . $orderId;
             </div>
 
             <!-- Shipping & Order Summary -->
-            <div class="row mb-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-light">
-                            <h5 class="mb-0">Shipping Information</h5>
+            <div class="row mb-4 fade-in-up stagger-3">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt pe-2"></i> Shipping Info</h5>
                         </div>
                         <div class="card-body">
                             <p class="mb-2">
@@ -126,9 +244,9 @@ $page_title = 'Order Confirmation - #' . $orderId;
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-light">
-                            <h5 class="mb-0">Order Summary</h5>
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-receipt pe-2"></i> Order Summary</h5>
                         </div>
                         <div class="card-body">
                             <?php
@@ -162,38 +280,38 @@ $page_title = 'Order Confirmation - #' . $orderId;
             </div>
 
             <?php if (!empty($order['notes'])): ?>
-            <div class="card mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Additional Notes</h5>
+            <div class="card mb-4 fade-in-up stagger-3">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-card-text pe-2"></i> Additional Notes</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4 text-muted">
                     <?= nl2br(htmlspecialchars($order['notes'])) ?>
                 </div>
             </div>
             <?php endif; ?>
 
             <!-- Action Buttons -->
-            <div class="row gap-2">
+            <div class="row gap-3 gap-sm-0 fade-in-up stagger-3 mt-4">
                 <div class="col-sm-6">
-                    <a href="shop.php" class="btn btn-outline-primary w-100">
+                    <a href="shop.php" class="action-btn btn-outline-custom w-100">
                         <i class="bi bi-shop"></i> Continue Shopping
                     </a>
                 </div>
-                <div class="col-sm-6">
-                    <a href="index.php" class="btn btn-primary w-100">
+                <div class="col-sm-6 mt-3 mt-sm-0">
+                    <a href="index.php" class="action-btn btn-primary-custom w-100">
                         <i class="bi bi-house"></i> Back to Home
                     </a>
                 </div>
             </div>
 
             <!-- Info Box -->
-            <div class="alert alert-light border mt-4">
-                <p class="mb-2"><strong>What happens next?</strong></p>
-                <ul class="mb-0">
+            <div class="alert mt-5 p-4 fade-in-up stagger-3" style="background: #fdfdfd; border: 1px dashed #ced4da; border-radius: 12px;">
+                <p class="mb-3 fw-bold text-dark"><i class="bi bi-stars pe-1" style="color: #fbc02d;"></i> What happens next?</p>
+                <ul class="mb-0 text-muted" style="line-height: 1.8;">
                     <li>Our team will verify and process your order</li>
                     <li>You will receive an SMS/Email confirmation</li>
                     <li>Your order will be shipped soon</li>
-                    <li>Track your order using Order ID: <strong>#<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></strong></li>
+                    <li>Keep your order ID: <strong class="text-dark">#<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></strong> for tracking</li>
                 </ul>
             </div>
         </div>

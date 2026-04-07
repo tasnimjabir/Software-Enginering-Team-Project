@@ -23,7 +23,8 @@ if (isset($_GET['msg'])) {
 // ── Search / filter ──────────────────────────────────────────────────────────
 $search    = trim($_GET['search'] ?? '');
 $catFilter = intval($_GET['cat']  ?? 0);
-$sort      = in_array($_GET['sort'] ?? '', ['name','price_asc','price_desc','newest']) ? $_GET['sort'] : 'newest';
+$validSorts = ['name','price_asc','price_desc','newest','most_viewed','most_ordered'];
+$sort = in_array($_GET['sort'] ?? '', $validSorts) ? $_GET['sort'] : 'newest';
 
 $where  = [];
 $params = [];
@@ -39,18 +40,24 @@ if ($catFilter > 0) {
 }
 
 $sortMap = [
-    'name'       => 'p.name ASC',
-    'price_asc'  => 'p.price ASC',
-    'price_desc' => 'p.price DESC',
-    'newest'     => 'p.id DESC',
+    'name'          => 'p.name ASC',
+    'price_asc'     => 'p.price ASC',
+    'price_desc'    => 'p.price DESC',
+    'newest'        => 'p.id DESC',
+    'most_viewed'   => 'p.views DESC',
+    'most_ordered'  => 'order_count DESC',
 ];
 $orderBy = $sortMap[$sort];
 
-$sql = "SELECT p.id, p.name, p.slug, p.price, p.main_image,
-               c.name AS category, p.category_id, p.description, p.discount_price
+$sql = "SELECT p.id, p.name, p.slug, p.price, p.main_image, p.views,
+               c.name AS category, p.category_id, p.description, p.discount_price,
+               COALESCE(SUM(oi.quantity), 0) AS order_count
         FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id"
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN order_items oi ON oi.product_id = p.id"
      . (!empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
+     . " GROUP BY p.id, p.name, p.slug, p.price, p.main_image, p.views,
+                  c.name, p.category_id, p.description, p.discount_price"
      . " ORDER BY $orderBy";
 
 $products = $db->fetch($sql, $params);
@@ -75,6 +82,8 @@ $totalProducts   = $db->fetchOne('SELECT COUNT(*) AS c FROM products')['c']   ??
 $totalCategories = count($categories);
 $avgPrice        = $db->fetchOne('SELECT AVG(price) AS a FROM products')['a'] ?? 0;
 $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE discount_price IS NOT NULL AND discount_price > 0 AND discount_price < price')['c'] ?? 0;
+$totalViews      = $db->fetchOne('SELECT SUM(views) AS v FROM products')['v'] ?? 0;
+$totalOrdered    = $db->fetchOne('SELECT COALESCE(SUM(quantity),0) AS t FROM order_items')['t'] ?? 0;
 ?>
 <body>
 <div class="admin-wrapper">
@@ -90,31 +99,52 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                     <p class="page-sub">Manage your store catalogue</p>
                 </div>
                 <button class="btn btn-primary btn-icon" onclick="openModal()">
-                    <span>＋</span> Add Product
+                    <i class="bi bi-plus-lg"></i> Add Product
                 </button>
             </div>
 
-            <!-- Analytics Strip -->
-            <div class="analytics-grid" style="margin-bottom:24px;">
-                <div class="analytics-card">
-                    <div class="analytics-label">Total Products</div>
-                    <div class="analytics-value"><?= number_format($totalProducts) ?></div>
-                    <div class="analytics-icon">📦</div>
+            <!-- ═══ Analytics row: list card + pie chart ═══ -->
+            <div style="display:grid; grid-template-columns:300px 1fr; gap:20px; margin-bottom:24px;">
+
+                <!-- Left: list-style analytics card -->
+                <div class="card" style="border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.06); overflow:hidden;">
+                    <div style="padding:14px 18px 10px; font-weight:700; font-size:.9rem; border-bottom:1px solid #f1f1f1; color:#333;">
+                        <i class="bi bi-bar-chart-line me-2" style="color:#c62828;"></i>Product Overview
+                    </div>
+                    <?php
+                    $metrics = [
+                        ['Total Products',    number_format($totalProducts),       'bi-box-seam',        '#1976d2'],
+                        ['Categories',        $totalCategories,                    'bi-folder2-open',    '#ba68c8'],
+                        ['Average Price',     '$'.number_format($avgPrice, 2),     'bi-currency-dollar', '#66bb6a'],
+                        ['On Sale',           $discountedItems,                    'bi-tags',            '#ff7043'],
+                        ['Total Views',       number_format($totalViews),          'bi-eye',             '#29b6f6'],
+                        ['Total Units Sold',  number_format($totalOrdered),        'bi-bag-check',       '#5c6bc0'],
+                    ];
+                    foreach ($metrics as $m): ?>
+                    <div style="display:flex;align-items:center;justify-content:space-between;
+                                padding:9px 18px;border-bottom:1px solid #f7f7f7;
+                                transition:background .15s;"
+                         onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                        <div style="display:flex;align-items:center;gap:9px;">
+                            <span style="width:28px;height:28px;border-radius:7px;background:<?= $m[3] ?>18;
+                                         display:flex;align-items:center;justify-content:center;">
+                                <i class="bi <?= $m[2] ?>" style="color:<?= $m[3] ?>;font-size:.85rem;"></i>
+                            </span>
+                            <span style="font-size:.84rem;color:#555;font-weight:500;"><?= $m[0] ?></span>
+                        </div>
+                        <span style="font-weight:700;font-size:.9rem;color:#222;"><?= $m[1] ?></span>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="analytics-card">
-                    <div class="analytics-label">Categories</div>
-                    <div class="analytics-value"><?= $totalCategories ?></div>
-                    <div class="analytics-icon">🗂️</div>
-                </div>
-                <div class="analytics-card">
-                    <div class="analytics-label">Avg Price</div>
-                    <div class="analytics-value" style="color:#66bb6a;">$<?= number_format($avgPrice, 2) ?></div>
-                    <div class="analytics-icon">💲</div>
-                </div>
-                <div class="analytics-card">
-                    <div class="analytics-label">On Sale</div>
-                    <div class="analytics-value" style="color:#ff7043;"><?= $discountedItems ?></div>
-                    <div class="analytics-icon">🏷️</div>
+
+                <!-- Right: pie chart (Discounted vs Regular) -->
+                <div class="card" style="border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.06); padding:20px;">
+                    <div style="font-weight:700;font-size:.9rem;margin-bottom:14px;color:#333;">
+                        <i class="bi bi-pie-chart me-2" style="color:#c62828;"></i>Product Distribution
+                    </div>
+                    <div style="height:220px;">
+                        <canvas id="productChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -123,7 +153,7 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
             <!-- Filter Bar -->
             <form method="GET" class="filter-bar" id="filterForm">
                 <div class="search-wrap">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"><i class="bi bi-search"></i></span>
                     <input type="text" name="search" placeholder="Search products…"
                            value="<?= htmlspecialchars($search) ?>" class="search-input"
                            onchange="this.form.submit()">
@@ -137,15 +167,18 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                     <?php endforeach; ?>
                 </select>
                 <select name="sort" class="filter-select" onchange="this.form.submit()">
-                    <option value="newest"     <?= $sort==='newest'     ? 'selected':'' ?>>Newest First</option>
-                    <option value="name"       <?= $sort==='name'       ? 'selected':'' ?>>Name A–Z</option>
-                    <option value="price_asc"  <?= $sort==='price_asc'  ? 'selected':'' ?>>Price ↑</option>
-                    <option value="price_desc" <?= $sort==='price_desc' ? 'selected':'' ?>>Price ↓</option>
+                    <option value="newest"        <?= $sort==='newest'        ? 'selected':'' ?>>Newest First</option>
+                    <option value="name"          <?= $sort==='name'          ? 'selected':'' ?>>Name A–Z</option>
+                    <option value="price_asc"     <?= $sort==='price_asc'     ? 'selected':'' ?>>Price ↑</option>
+                    <option value="price_desc"    <?= $sort==='price_desc'    ? 'selected':'' ?>>Price ↓</option>
+                    <option value="most_viewed"   <?= $sort==='most_viewed'   ? 'selected':'' ?>>Most Viewed</option>
+                    <option value="most_ordered"  <?= $sort==='most_ordered'  ? 'selected':'' ?>>Most Ordered</option>
                 </select>
                 <?php if ($search || $catFilter): ?>
                     <a href="products.php" class="btn-clear">✕ Clear</a>
                 <?php endif; ?>
             </form>
+
 
             <!-- Products Grid -->
             <div class="products-grid">
@@ -162,9 +195,9 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                                      class="product-img" onerror="this.src='https://via.placeholder.com/300x200/2a2a2a/888?text=No+Image'">
                                 <div class="product-overlay">
                                     <button class="overlay-btn" title="Edit"
-                                        onclick="openEditModal(<?= htmlspecialchars(json_encode($p)) ?>)">✏️ Edit</button>
+                                        onclick="openEditModal(<?= htmlspecialchars(json_encode($p)) ?>)"><i class="bi bi-pencil"></i> Edit</button>
                                     <button class="overlay-btn danger" title="Delete"
-                                        onclick="confirmDelete(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['name'])) ?>')">🗑️ Delete</button>
+                                        onclick="confirmDelete(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['name'])) ?>')"><i class="bi bi-trash"></i> Delete</button>
                                 </div>
                             </div>
                             <div class="product-info">
@@ -176,12 +209,21 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                                         <span class="stock-badge low">Sale</span>
                                     <?php endif; ?>
                                 </div>
+                                <!-- View & order stats -->
+                                <div style="display:flex;gap:10px;margin-top:6px;">
+                                    <span style="font-size:.75rem;color:#888;display:flex;align-items:center;gap:3px;">
+                                        <i class="bi bi-eye" style="color:#29b6f6;"></i> <?= number_format((int)$p['views']) ?>
+                                    </span>
+                                    <span style="font-size:.75rem;color:#888;display:flex;align-items:center;gap:3px;">
+                                        <i class="bi bi-bag-check" style="color:#5c6bc0;"></i> <?= number_format((int)$p['order_count']) ?>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="empty-state">
-                        <div class="empty-icon">📭</div>
+                        <div class="empty-icon" style="font-size:3rem; color:#ccc;"><i class="bi bi-inbox"></i></div>
                         <div class="empty-text">No products found</div>
                         <button class="btn btn-primary" onclick="openModal()" style="margin-top:14px;">Add your first product</button>
                     </div>
@@ -263,7 +305,7 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                         <!-- ─ MAIN IMAGE ─ -->
                         <div class="form-group">
                             <label class="form-label upload-section-label">
-                                <span class="upload-label-icon">⭐</span>
+                                <span class="upload-label-icon"><i class="bi bi-star-fill" style="color:#fbc02d;"></i></span>
                                 Main Image
                                 <span class="upload-label-hint">shown on product card</span>
                             </label>
@@ -314,7 +356,7 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
                         <!-- ─ GALLERY IMAGES ─ -->
                         <div class="form-group" style="margin-top:4px;">
                             <label class="form-label upload-section-label">
-                                <span class="upload-label-icon">🖼</span>
+                                <span class="upload-label-icon"><i class="bi bi-images" style="color:#1976d2;"></i></span>
                                 Gallery Images
                                 <span class="upload-label-hint">additional photos</span>
                             </label>
@@ -365,7 +407,7 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
 <!-- ── Delete Confirm Modal ──────────────────────────────────────────── -->
 <div id="deleteModal" class="modal-overlay modal-sm" onclick="closeDeleteOnOverlay(event)">
     <div class="modal-box modal-box-sm">
-        <div class="delete-icon-big">🗑️</div>
+        <div class="delete-icon-big" style="font-size:3rem; color:#f44336; margin-bottom:1rem;"><i class="bi bi-trash"></i></div>
         <h3 class="delete-title">Delete Product?</h3>
         <p class="delete-sub" id="deleteProductName"></p>
         <p class="delete-warn">This will permanently remove the product and cannot be undone.</p>
@@ -562,7 +604,38 @@ $discountedItems = $db->fetchOne('SELECT COUNT(*) AS c FROM products WHERE disco
 <!-- ══════════════════════════════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Chart initialization
+document.addEventListener('DOMContentLoaded', function() {
+    Chart.defaults.font.family = "'Inter','Segoe UI',sans-serif";
+    Chart.defaults.color = '#888';
+
+    new Chart(document.getElementById('productChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Regular', 'On Sale'],
+            datasets: [{
+                data: [
+                    <?= (int)$totalProducts - (int)$discountedItems ?>,
+                    <?= (int)$discountedItems ?>
+                ],
+                backgroundColor: ['#1976d2', '#ff7043'],
+                borderWidth: 0,
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } }
+            }
+        }
+    });
+});
+
 /* ── Internal state ───────────────────────────────────────────────────────── */
 // We keep DataTransfer objects so we can pass real File lists to the hidden inputs.
 // mainDT  → feeds #fMainImage (name="images[]", first = main image for backend)

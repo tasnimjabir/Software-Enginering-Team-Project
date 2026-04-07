@@ -12,8 +12,7 @@
 				// 'orders.php' => 'Orders',
 				// 'reports.php' => 'Reports',
 				'carousel.php' => 'Carousel',
-				'faqs.php' => 'FAQs',
-				'product-settings.php' => 'Product Info',
+				'info.php' => 'Info',
 				'settings.php' => 'Settings'
 			];
 			?>

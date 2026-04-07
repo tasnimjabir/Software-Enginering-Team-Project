@@ -14,9 +14,9 @@
     --white:     #ffffff;
     --rule:      #e5e7eb;
     --rule-dark: #d1d5db;
-    --font-head: 'Bebas Neue', 'Impact', sans-serif;
+    --font-head: 'Hind Siliguri', 'Segoe UI', Tahoma, sans-serif;
     --font-body: 'Hind Siliguri', 'Segoe UI', Tahoma, sans-serif;
-    --font-serif:'DM Serif Display', Georgia, serif;
+    --font-serif:'Hind Siliguri', 'Segoe UI', Tahoma, sans-serif;
     --ease:      cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -175,7 +175,7 @@
 }
 
 .shop-container {
-    max-width: 1400px;
+    max-width: 1750px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }

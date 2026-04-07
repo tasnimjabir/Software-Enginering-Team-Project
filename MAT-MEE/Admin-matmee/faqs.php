@@ -20,10 +20,10 @@ $totalFaqs = count($faqs);
 $flash = '';
 if (isset($_GET['msg'])) {
     $msgs = [
-        'created' => ['✓ FAQ created successfully!', 'success'],
-        'updated' => ['✓ FAQ updated successfully!', 'success'],
-        'deleted' => ['✓ FAQ deleted successfully!', 'success'],
-        'error'   => ['✗ An error occurred.', 'error'],
+        'created' => ['<i class="bi bi-check-circle"></i> FAQ created successfully!', 'success'],
+        'updated' => ['<i class="bi bi-check-circle"></i> FAQ updated successfully!', 'success'],
+        'deleted' => ['<i class="bi bi-check-circle"></i> FAQ deleted successfully!', 'success'],
+        'error'   => ['<i class="bi bi-exclamation-circle"></i> An error occurred.', 'error'],
     ];
     if (isset($msgs[$_GET['msg']])) {
         [$text, $type] = $msgs[$_GET['msg']];
@@ -39,14 +39,19 @@ if (isset($_GET['msg'])) {
         <main class="content">
 
             <!-- Header Row -->
-            <div class="products-header">
+            <div class="products-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <div>
                     <h1 class="page-title">FAQs</h1>
                     <p class="page-sub">Manage product FAQs</p>
                 </div>
-                <a href="faq-save.php" class="btn btn-primary btn-icon">
-                    <span>＋</span> Add FAQ
-                </a>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="info.php" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; padding:0.5rem 1rem; border-radius:6px;">
+                        <i class="bi bi-arrow-left"></i> Back to Info
+                    </a>
+                    <a href="faq-save.php" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; padding:0.5rem 1rem; border-radius:6px; background:#800000; color:#fff;">
+                        <i class="bi bi-plus-lg"></i> Add FAQ
+                    </a>
+                </div>
             </div>
 
             <!-- Analytics Strip -->
@@ -54,12 +59,12 @@ if (isset($_GET['msg'])) {
                 <div class="analytics-card">
                     <div class="analytics-label">Total FAQs</div>
                     <div class="analytics-value"><?= number_format($totalFaqs) ?></div>
-                    <div class="analytics-icon">❓</div>
+                    <div class="analytics-icon" style="color: #1976d2;"><i class="bi bi-question-circle"></i></div>
                 </div>
                 <div class="analytics-card">
                     <div class="analytics-label">Active FAQs</div>
                     <div class="analytics-value" style="color:#66bb6a;"><?= count(array_filter($faqs, fn($f) => $f['is_active'])) ?></div>
-                    <div class="analytics-icon">✓</div>
+                    <div class="analytics-icon" style="color:#66bb6a;"><i class="bi bi-check-circle"></i></div>
                 </div>
             </div>
 

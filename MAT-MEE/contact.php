@@ -2,15 +2,8 @@
 $page_title = 'Contact Us';
 require_once 'components/config-page.php';
 ?>
-
+<link rel="stylesheet" href="asset/css/about-contact.css">
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Get In Touch</h1>
-            <p>We'd love to hear from you</p>
-        </div>
-    </section>
 
     <!-- Contact Content -->
     <section class="contact-content">

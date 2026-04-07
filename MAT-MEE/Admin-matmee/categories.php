@@ -47,7 +47,7 @@ foreach ($categories as $c) {
                     <p class="page-sub">Manage product categories</p>
                 </div>
                 <button class="btn btn-primary btn-icon" onclick="openModal()">
-                    <span>＋</span> Add Category
+                    <i class="bi bi-plus-lg"></i> Add Category
                 </button>
             </div>
 
@@ -56,16 +56,26 @@ foreach ($categories as $c) {
                 <div class="analytics-card">
                     <div class="analytics-label">Total Categories</div>
                     <div class="analytics-value"><?= number_format($totalCategories) ?></div>
-                    <div class="analytics-icon">🗂️</div>
+                    <div class="analytics-icon" style="color:#ba68c8;"><i class="bi bi-folder2-open"></i></div>
                 </div>
                 <div class="analytics-card">
                     <div class="analytics-label">Total Classified Products</div>
                     <div class="analytics-value" style="color:#66bb6a;"><?= number_format($totalProducts) ?></div>
-                    <div class="analytics-icon">📦</div>
+                    <div class="analytics-icon" style="color:#66bb6a;"><i class="bi bi-box-seam"></i></div>
                 </div>
             </div>
 
             <?= $flash ?>
+
+            <!-- Graph Section -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-body">
+                    <h3 style="margin-top:0; margin-bottom: 1rem; font-size: 1.1rem; color: #333;">Products per Category</h3>
+                    <div style="height: 300px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
             <!-- Categories Grid / Table -->
             <div class="card">
@@ -91,7 +101,7 @@ foreach ($categories as $c) {
                                                      style="width:50px; height:50px; object-fit:cover; border-radius:4px;" 
                                                      alt="<?= htmlspecialchars($c['name']) ?>">
                                             <?php else: ?>
-                                                <div style="width:50px; height:50px; background:#e0e0e0; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:24px;">📦</div>
+                                                <div style="width:50px; height:50px; background:#e0e0e0; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:24px; color:#aaa;"><i class="bi bi-image"></i></div>
                                             <?php endif; ?>
                                         </td>
                                         <td><strong><?= htmlspecialchars($c['name']) ?></strong></td>
@@ -99,10 +109,8 @@ foreach ($categories as $c) {
                                         <td><?= $c['size_count'] ?> sizes</td>
                                         <td><?= $c['product_count'] ?> products</td>
                                         <td style="text-align: right;">
-                                            <div class="action-icons" style="opacity:1; visibility:visible; justify-content: flex-end;">
-                                                <a href="#" class="icon-edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($c)) ?>); return false;" title="Edit">✏️</a>
-                                                <a href="#" class="icon-delete" onclick="confirmDelete(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['name'])) ?>', <?= $c['product_count'] ?>); return false;" title="Delete">🗑️</a>
-                                            </div>
+                                                <a href="#" class="icon-edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($c)) ?>); return false;" title="Edit"><span style="font-size:1.2rem; color:#1976d2;"><i class="bi bi-pencil"></i></span></a>
+                                                <a href="#" class="icon-delete" onclick="confirmDelete(<?= $c['id'] ?>, '<?= htmlspecialchars(addslashes($c['name'])) ?>', <?= $c['product_count'] ?>); return false;" title="Delete"><span style="font-size:1.2rem; color:#f44336;"><i class="bi bi-trash"></i></span></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -183,7 +191,7 @@ foreach ($categories as $c) {
 <!-- ── Delete Confirm Modal ──────────────────────────────────────────── -->
 <div id="deleteModal" class="modal-overlay modal-sm" onclick="closeDeleteOnOverlay(event)">
     <div class="modal-box modal-box-sm">
-        <div class="delete-icon-big">🗑️</div>
+        <div class="delete-icon-big" style="font-size:3rem; color:#f44336; margin-bottom:1rem;"><i class="bi bi-trash"></i></div>
         <h3 class="delete-title">Delete Category?</h3>
         <p class="delete-sub" id="deleteCategoryName"></p>
         <p class="delete-warn" id="deleteCategoryWarn">This will permanently remove the category.</p>
@@ -197,7 +205,29 @@ foreach ($categories as $c) {
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const categoryNames = [<?php echo implode(',', array_map(fn($c) => '"' . addslashes($c['name']) . '"', $categories)); ?>];
+    const productCounts = [<?php echo implode(',', array_column($categories, 'product_count')); ?>];
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categoryNames,
+            datasets: [{
+                label: 'Products',
+                data: productCounts,
+                backgroundColor: '#ba68c8'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+
 let currentEditingId = 0;
 
 function openModal() {

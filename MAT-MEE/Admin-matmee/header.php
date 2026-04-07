@@ -31,7 +31,7 @@ $db = DatabaseConnection::getInstance();
 <header class="topbar">
 	<div class="brand">
 		<img src="../image/logo.png" alt="Logo" class="logo">
-		<span class="site-name">MAT-MEE</span>
+		<span class="site-name">MAT-MEE</span> <a href="../index.php" target="_blank" style="color:#999; margin-left: 1rem;">View Site</a>
 	</div>
 	<div class="top-actions">
 		<span class="admin-name"><?php echo htmlspecialchars($_SESSION['admin_username'] ?? 'Administrator'); ?></span>

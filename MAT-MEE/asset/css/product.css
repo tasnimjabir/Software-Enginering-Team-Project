@@ -85,12 +85,16 @@
     align-items: start;
 }
 
+.pv-gallery { grid-column: 1; grid-row: 1; }
+.pv-left-panel { grid-column: 2; grid-row: 1; }
+
 @media (max-width: 991.98px) {
     .pv-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    .pv-gallery { order: -1; }
+    .pv-gallery { grid-column: auto; grid-row: auto; order: -1; }
+    .pv-left-panel { grid-column: auto; grid-row: auto; }
 }
 
 /* ════ LEFT PANEL ════ */
@@ -151,39 +155,54 @@
 /* ════ PRICE BLOCK ════ */
 .pv-price-block {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 1rem;
     flex-wrap: wrap;
-    padding: 1.1rem 1.4rem;
-    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
-    border: 1px solid rgba(128, 0, 0, 0.14);
-    border-left: 4px solid var(--primary-color);
-    border-radius: 0 10px 10px 0;
+    padding: 0.8rem 0;
+    margin-top: 0.5rem;
+    border-bottom: 1px solid rgba(128, 0, 0, 0.1);
 }
 
 .pv-price-final {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2.2rem;
+    font-weight: 700;
     color: var(--primary-color);
     line-height: 1;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
 }
 
 .pv-price-orig {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--text-light);
     text-decoration: line-through;
 }
 
 .pv-save-pill {
-    background: var(--warning-color);
-    color: #fff;
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
+    background: var(--primary-ultra);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ════ INLINE DESCRIPTION ════ */
+.pv-desc-inline {
+    padding: 1rem 0;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.pv-desc-inline .pv-desc-body {
+    border-left: 2px solid var(--primary-color);
+    padding-left: 1rem;
+    background: rgba(128, 0, 0, 0.02);
+    padding: 0.5rem 1rem;
+    border-radius: 0 4px 4px 0;
 }
 
 /* ════ OPTION ROWS ════ */
@@ -219,7 +238,7 @@
     padding: 0.55rem 1.1rem;
     border: 2px solid var(--border-color);
     background: #fff;
-    border-radius: 8px;
+    border-radius: 4px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -265,7 +284,7 @@
     display: flex;
     align-items: center;
     border: 2px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 4px;
     width: fit-content;
     overflow: hidden;
     background: #fff;
@@ -322,7 +341,7 @@
 .pv-btn-buy {
     padding: 0.95rem 1.25rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 4px;
     font-weight: 700;
     font-size: 0.94rem;
     cursor: pointer;
@@ -515,7 +534,7 @@
 .pv-main-img-box {
     position: relative;
     background: var(--light-bg);
-    border-radius: 16px;
+    border-radius: 4px;
     overflow: hidden;
     aspect-ratio: 1;
     display: flex;
@@ -551,16 +570,33 @@
 
 /* ── Thumbnail strip ── */
 .pv-thumb-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 0.6rem;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--border-color);
+}
+
+.pv-thumb-strip::-webkit-scrollbar {
+    height: 6px;
+}
+.pv-thumb-strip::-webkit-scrollbar-track {
+    background: var(--light-bg);
+    border-radius: 4px;
+}
+.pv-thumb-strip::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 4px;
 }
 
 .pv-thumb {
-    aspect-ratio: 1;
+    flex: 0 0 80px;
+    height: 80px;
     border: 2px solid var(--border-color);
     background: var(--light-bg);
-    border-radius: 10px;
+    border-radius: 4px;
     padding: 0;
     cursor: pointer;
     overflow: hidden;
@@ -590,7 +626,6 @@
 /* ════ TABS SECTION ════ */
 .pv-tabs-section {
     padding: 3rem 0 2.5rem;
-    border-top: 3px solid var(--primary-color);
     margin-top: 3rem;
     background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100px);
 }
@@ -601,7 +636,6 @@
     gap: 0;
     margin-bottom: 2rem;
     border-bottom: 2px solid var(--border-color);
-    overflow-x: auto;
 }
 
 .pv-tab {
@@ -764,7 +798,7 @@
 
 .pv-rel-card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 4px;
     overflow: hidden;
     text-decoration: none;
     transition: all 0.3s;

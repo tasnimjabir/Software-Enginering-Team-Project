@@ -19,7 +19,7 @@ Client: MAT MEE
 
     <!-- Products Section -->
     <section class="products-section" id="products">
-        <div class="container">
+        <div class="container-xl">
             <!-- Section Title -->
             <div style="margin-bottom: 2rem; text-align: center;">
                 <h2 style="font-size: 2rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Our Collection</h2>
@@ -27,12 +27,12 @@ Client: MAT MEE
             </div>
             
             <!-- Category Selector -->
-            <div class="category-selector-wrapper">
-                <div class="category-selector">
-                    <button class="category-btn active" data-category="">
+            <div class="category-selector-wrapper container">
+                <div class="category-selector" style="flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; padding-bottom: 5px; justify-content: flex-start; align-items: center;">
+                    <button class="category-btn active" data-category="" style="flex-shrink: 0; margin-left: 10px;">
                         All Products
                     </button>
-                    <div id="categoryContainer"></div>
+                    <div id="categoryContainer" style="display: flex; flex-wrap: nowrap; flex-shrink: 0;"></div>
                 </div>
             </div>
 
@@ -253,5 +253,29 @@ Client: MAT MEE
 
     <!-- Shop Management Script -->
     <script src="asset/js/shop.js"></script>
+
+
+<style>
+        .map {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border: 10px solid #d4d4d4;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+
+<div class="w-100">
+    <div class="map">
+        <iframe 
+            src="https://www.google.com/maps?q=Dhaka,Bangladesh&output=embed">
+        </iframe>
+    </div>
+</div>
 
 <?php require_once 'components/page_close.php'; ?>

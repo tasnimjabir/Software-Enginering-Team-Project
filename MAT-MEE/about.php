@@ -2,15 +2,8 @@
 $page_title = 'About Us';
 require_once 'components/config-page.php';
 ?>
-
+<link rel="stylesheet" href="asset/css/about-contact.css">
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>About MAT MEE</h1>
-            <p>Premium Fashion With Tradition & Style</p>
-        </div>
-    </section>
 
     <!-- About Content -->
     <section class="about-content">
@@ -76,87 +69,6 @@ require_once 'components/config-page.php';
                     <i class="bi bi-shield-check"></i>
                     <h4>Secure Shopping</h4>
                     <p>Safe and secure payment options for your peace of mind.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Team Section -->
-    <section class="team-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Our Team</h2>
-                <p>Meet the passionate minds behind MAT MEE</p>
-            </div>
-
-            <div class="team-grid">
-                <div class="team-card">
-                    <div class="team-image">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="team-info">
-                        <h4>Tasnim Jabir</h4>
-                        <p>Developer</p>
-                    </div>
-                </div>
-                <div class="team-card">
-                    <div class="team-image">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="team-info">
-                        <h4>Md Shadman Shakib Dip</h4>
-                        <p>Developer</p>
-                    </div>
-                </div>
-                <div class="team-card">
-                    <div class="team-image">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="team-info">
-                        <h4>Shahedur Rahman Rafin</h4>
-                        <p>Developer</p>
-                    </div>
-                </div>
-                <div class="team-card">
-                    <div class="team-image">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="team-info">
-                        <h4>Noor A Arabi</h4>
-                        <p>Developer</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="about-content" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: #fff;">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div>
-                        <h3 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">500+</h3>
-                        <p style="margin: 0; font-size: 1.1rem;">Products</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div>
-                        <h3 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">5000+</h3>
-                        <p style="margin: 0; font-size: 1.1rem;">Happy Customers</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div>
-                        <h3 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">15+</h3>
-                        <p style="margin: 0; font-size: 1.1rem;">Years Experience</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div>
-                        <h3 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">100%</h3>
-                        <p style="margin: 0; font-size: 1.1rem;">Satisfaction</p>
-                    </div>
                 </div>
             </div>
         </div>
