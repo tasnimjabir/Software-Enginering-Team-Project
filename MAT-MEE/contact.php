@@ -1,6 +1,26 @@
 <?php 
 $page_title = 'Contact Us';
 require_once 'components/config-page.php';
+
+$message_status = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_contact'])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
+    
+    $sql = "INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)";
+    
+    // $conn is a DatabaseConnection instance from components/config-page.php
+    $inserted = $conn->execute($sql, [$name, $email, $phone, $subject, $message]);
+    
+    if ($inserted !== false) {
+        $message_status = '<div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">Thank you for your message! We will get back to you as soon as possible.</div>';
+    } else {
+        $message_status = '<div class="alert alert-danger" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">Error saving message. Please try again.</div>';
+    }
+}
 ?>
 <link rel="stylesheet" href="asset/css/about-contact.css">
 <body>
@@ -84,7 +104,8 @@ require_once 'components/config-page.php';
                 <!-- Contact Form -->
                 <div class="contact-form">
                     <h3>Send us a Message</h3>
-                    <form id="contactForm" action="#" method="POST">
+                    <?php if($message_status) echo $message_status; ?>
+                    <form id="contactForm" action="" method="POST">
                         <div class="form-group">
                             <label for="name">Full Name</label>
                             <input type="text" id="name" name="name" placeholder="Enter your full name" required>
@@ -110,7 +131,7 @@ require_once 'components/config-page.php';
                             <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
                         </div>
 
-                        <button type="submit" class="submit-btn">
+                        <button type="submit" name="submit_contact" class="submit-btn" style="border: none; cursor: pointer;">
                             <i class="bi bi-send"></i>
                             Send Message
                         </button>
@@ -135,6 +156,7 @@ require_once 'components/config-page.php';
                         <p style="color: var(--text-light); margin: 0;">We offer same-day and next-day delivery options in Rangpur. Delivery times may vary for other areas. Contact us for specific details.</p>
                     </div>
                 </div>
+
 
                 <div class="col-lg-6 mb-4">
                     <div style="padding: 1.5rem; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); border-left: 4px solid var(--primary-color);">
@@ -181,26 +203,5 @@ require_once 'components/config-page.php';
     </section>
 
 </body>
-
-<script>
-    // Handle form submission
-    document.getElementById('contactForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form values
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        // Here you would typically send this data to a server
-        // For now, we'll show a success message
-        alert('Thank you for your message! We will get back to you as soon as possible.');
-        
-        // Reset form
-        this.reset();
-    });
-</script>
 
 <?php require_once 'components/page_close.php'; ?>

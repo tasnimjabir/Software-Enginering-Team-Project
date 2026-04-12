@@ -63,29 +63,62 @@ const ShopManager = {
      * Setup event delegation for dynamic content
      */
     initializeEventDelegation() {
-        const container = document.getElementById('productsContainer');
-        
-        if (container) {
-            // View image button
-            container.addEventListener('click', (e) => {
-                if (e.target.closest(this.selectors.viewButtons)) {
-                    this.handleViewImageClick(e);
-                }
-            });
-
-            // Add to cart button
-            container.addEventListener('click', (e) => {
-                if (e.target.closest(this.selectors.addToCartButtons)) {
-                    this.handleAddToCartClick(e);
-                }
-            });
-        }
+        // Use document-level delegation so it works for AJAX-replaced content too
+        document.addEventListener('click', (e) => {
+            if (e.target.closest(this.selectors.viewButtons)) {
+                this.handleViewImageClick(e);
+            } else if (e.target.closest(this.selectors.addToCartButtons)) {
+                this.handleAddToCartClick(e);
+            } else if (e.target.closest('.img-prev')) {
+                this.handleImageNav(e, -1);
+            } else if (e.target.closest('.img-next')) {
+                this.handleImageNav(e, 1);
+            }
+        });
 
         // Setup modal quantity buttons (not delegated since they're outside products container)
         this.setupModalQuantityButtons();
 
         // Setup form submission
         this.setupFormSubmission();
+    },
+
+    /**
+     * Handle image prev/next navigation on product cards
+     */
+    handleImageNav(e, direction) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const btn         = e.target.closest('.img-nav-btn');
+        const productImg  = btn.closest('.product-image')?.querySelector('.product-img');
+        if (!productImg) return;
+
+        let images = [];
+        try {
+            images = JSON.parse(productImg.dataset.images || '[]');
+        } catch (_) { return; }
+
+        if (images.length <= 1) return;
+
+        let idx = parseInt(productImg.dataset.imageIndex, 10) || 0;
+        idx = (idx + direction + images.length) % images.length;
+
+        // Smooth swap
+        productImg.style.opacity = '0';
+        setTimeout(() => {
+            productImg.src = images[idx];
+            productImg.dataset.imageIndex = idx;
+            productImg.style.opacity = '1';
+        }, 150);
+
+        // Update dot indicators
+        const dotsContainer = btn.closest('.product-image')?.querySelector('.img-dots');
+        if (dotsContainer) {
+            dotsContainer.querySelectorAll('.img-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === idx);
+            });
+        }
     },
 
     /**

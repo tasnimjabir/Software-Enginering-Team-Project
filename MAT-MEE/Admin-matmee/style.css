@@ -787,7 +787,7 @@ select option:hover {
 }
 
 .modal-box-sm {
-	max-width: 400px;
+	max-width: 90%;
 	text-align: center;
 	padding: 24px;
 }

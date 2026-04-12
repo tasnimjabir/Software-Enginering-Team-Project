@@ -19,7 +19,6 @@
 /* ════ GENERAL ════ */
 .pv-page {
     background: #ffffff;
-    padding: 0 0 3rem;
 }
 
 .pv-wrap {
@@ -31,7 +30,6 @@
 .pv-hr {
     height: 1px;
     background: linear-gradient(90deg, var(--primary-color) 0%, var(--border-color) 60%);
-    margin: 1.5rem 0;
     opacity: 0.35;
 }
 
@@ -101,7 +99,7 @@
 .pv-left-panel {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .pv-cat-tag {
@@ -134,7 +132,7 @@
     font-weight: 800;
     color: var(--text-dark);
     line-height: 1.2;
-    margin: 0;
+    margin-top: 10px;
     letter-spacing: -0.5px;
 }
 
@@ -159,7 +157,6 @@
     gap: 1rem;
     flex-wrap: wrap;
     padding: 0.8rem 0;
-    margin-top: 0.5rem;
     border-bottom: 1px solid rgba(128, 0, 0, 0.1);
 }
 
@@ -191,19 +188,15 @@
 
 /* ════ INLINE DESCRIPTION ════ */
 .pv-desc-inline {
-    padding: 1rem 0;
+    padding: 0 0;
     color: #4b5563;
     font-size: 0.95rem;
     line-height: 1.7;
 }
 
-.pv-desc-inline .pv-desc-body {
-    border-left: 2px solid var(--primary-color);
-    padding-left: 1rem;
-    background: rgba(128, 0, 0, 0.02);
-    padding: 0.5rem 1rem;
-    border-radius: 0 4px 4px 0;
-}
+/* .pv-desc-inline .pv-desc-body {
+    
+} */
 
 /* ════ OPTION ROWS ════ */
 .pv-option-row {
@@ -761,9 +754,8 @@
 /* ════ RELATED PRODUCTS ════ */
 .pv-related {
     padding: 3.5rem 0;
-    background: linear-gradient(180deg, #fff5f5 0%, var(--light-bg) 100%);
+    background: #dfdfdf;
     margin-top: 2rem;
-    border-top: 3px solid var(--primary-color);
 }
 
 .pv-section-heading {
@@ -916,6 +908,13 @@
 .pv-toast-err   { background: var(--warning-color); }
 
 /* ════ RESPONSIVE ════ */
+
+@media (max-width: 991px) {
+    .pv-gallery {
+        position: static;
+        top: 1rem;
+    }
+}
 @media (max-width: 767.98px) {
     .pv-page { padding: 0; }
     .pv-title { font-size: 1.5rem; }

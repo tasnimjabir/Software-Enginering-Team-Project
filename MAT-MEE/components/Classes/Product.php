@@ -5,47 +5,55 @@ require_once $base_url.'components/config-component.php';
 class Product {
     private $connection;
     private $products = [];
-    private $sql = '';
+    private $baseSql = '';
+    private $groupSql = '';
+    private $orderSql = '';
+    private $conditions = [];
     private $params = [];
 
     public function __construct() {
 
         $this->connection = DatabaseConnection::getInstance();
 
-        $this->sql = "SELECT p.id, p.name, p.slug, p.price, p.discount_price, p.main_image, c.name as category 
-                      FROM products p 
-                      LEFT JOIN categories c ON p.category_id = c.id";
-
-        // if (!empty($cat)) {
-        //     $this->sql .= " WHERE c.name = ?";
-        //     $this->params[] = $cat;
-        // }
-
-        // $this->sql .= " ORDER BY p." . $order;
+        $this->baseSql = "SELECT p.id, p.name, p.slug, p.price, p.discount_price, p.main_image, c.name as category,
+                             GROUP_CONCAT(pi.image ORDER BY pi.id ASC SEPARATOR '|') AS extra_images
+                      FROM products p
+                      LEFT JOIN categories c ON p.category_id = c.id
+                      LEFT JOIN product_images pi ON pi.product_id = p.id";
+                      
+        $this->groupSql = "GROUP BY p.id";
     }
 
     public function fetch() {
-        $this->products = $this->connection->fetch($this->sql, $this->params);
+        $sql = $this->baseSql;
+        if (!empty($this->conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $this->conditions);
+        }
+        $sql .= " " . $this->groupSql;
+        if (!empty($this->orderSql)) {
+            $sql .= " " . $this->orderSql;
+        }
+        
+        $this->products = $this->connection->fetch($sql, $this->params);
         return $this;
     }
 
     public function setSql($sql) {
-        $this->sql = $sql;
+        $this->baseSql = $sql;
+        $this->groupSql = '';
+        $this->orderSql = '';
+        $this->conditions = [];
         return $this;
     }
 
     public function addCondition($condition, $param) {
-        if (strpos($this->sql, 'WHERE') === false) {
-            $this->sql .= " WHERE " . $condition;
-        } else {
-            $this->sql .= " AND " . $condition;
-        }
+        $this->conditions[] = $condition;
         $this->params[] = $param;
         return $this;
     }
 
     public function addOrder($order) {
-        $this->sql .= " ORDER BY " . $order;
+        $this->orderSql = "ORDER BY " . $order;
         return $this;
     }
 

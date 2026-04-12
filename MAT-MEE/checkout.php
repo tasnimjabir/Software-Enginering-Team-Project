@@ -7,6 +7,13 @@ $page_title = 'Checkout';
 $successMessage = '';
 $errorMessage = '';
 
+require 'Email/PHPMailer-master/src/PHPMailer.php';
+require 'Email/PHPMailer-master/src/SMTP.php';
+require 'Email/PHPMailer-master/src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // Verify cart exists
 if (empty($cartId)) {
     ob_end_clean();
@@ -101,7 +108,206 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     // Redirect to confirmation - clear buffer first
                     ob_end_clean();
+
+
+                    $mail = new PHPMailer(true);
+
+                    // ── Build HTML email body ────────────────────────────────────────
+                    $orderIdPadded   = str_pad($orderId, 5, '0', STR_PAD_LEFT);
+                    $orderDate       = date('d F Y, h:i A');
+                    $mailOrderTotal  = 0;
+                    $itemRowsHtml    = '';
+                    foreach ($cartItems as $item) {
+                        $unitP = (!empty($item['discount_price']) && (float)$item['discount_price'] < (float)$item['price'])
+                            ? (float)$item['discount_price'] : (float)$item['price'];
+                        $subP  = $unitP * $item['quantity'];
+                        $mailOrderTotal += $subP;
+                        $sizeLabel = !empty($item['size_name']) ? ' <span style="color:#999;font-size:12px;">(' . htmlspecialchars($item['size_name']) . ')</span>' : '';
+                        $itemRowsHtml .= '
+                        <tr>
+                          <td style="padding:14px 12px;border-bottom:1px solid #f0f0f0;">
+                            <span style="font-weight:600;color:#1a1a1a;">' . htmlspecialchars($item['name']) . '</span>' . $sizeLabel . '<br>
+                            <span style="color:#888;font-size:12px;">Qty: ' . (int)$item['quantity'] . '</span>
+                          </td>
+                          <td style="padding:14px 12px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:600;color:#1a1a1a;white-space:nowrap;">
+                            &#2547;' . number_format($unitP, 0) . '
+                          </td>
+                          <td style="padding:14px 12px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700;color:#800000;white-space:nowrap;">
+                            &#2547;' . number_format($subP, 0) . '
+                          </td>
+                        </tr>';
+                    }
+                    $mailGrandTotal = $mailOrderTotal + $shippingCharge;
+
+                    $notesRow = !empty($notes)
+                        ? '<tr><td colspan="3" style="padding:10px 12px;background:#fffbe6;border-radius:6px;font-size:13px;color:#555;">
+                            <strong>📝 Note:</strong> ' . nl2br(htmlspecialchars($notes)) . '</td></tr>' : '';
+
+                    $emailBody = '<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation – Mat-Mee</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f7;font-family:\'Segoe UI\',Arial,sans-serif;">
+
+  <!-- Wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f7;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+          <!-- ── Header ── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#800000 0%,#3a0000 100%);border-radius:16px 16px 0 0;padding:40px 30px;text-align:center;">
+              <div style="display:inline-block;background:rgba(255,255,255,0.12);border-radius:50%;width:72px;height:72px;line-height:72px;font-size:34px;margin-bottom:18px;">🛍️</div><br>
+              <h1 style="margin:0 0 6px;color:#ffffff;font-size:26px;font-weight:800;letter-spacing:-0.5px;">Order Confirmed!</h1>
+              <p style="margin:0;color:rgba(255,255,255,0.75);font-size:15px;">Thank you for shopping with <strong style="color:#fff;">Mat-Mee</strong></p>
+            </td>
+          </tr>
+
+          <!-- ── White Card ── -->
+          <tr>
+            <td style="background:#ffffff;border-radius:0 0 16px 16px;padding:36px 30px 30px;box-shadow:0 8px 40px rgba(0,0,0,0.08);">
+
+              <!-- Greeting -->
+              <p style="margin:0 0 24px;font-size:16px;color:#333;">Hi <strong style="color:#800000;">' . htmlspecialchars($customerName) . '</strong>,</p>
+              <p style="margin:0 0 28px;font-size:14px;color:#555;line-height:1.7;">
+                Great news! We\'ve received your order and it\'s now being processed. Below is a summary of your purchase for your records.
+              </p>
+
+              <!-- Order Meta -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td width="50%" style="background:#fdf5f5;border-radius:10px;padding:16px 18px;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:700;margin-bottom:4px;">Order Number</div>
+                    <div style="font-size:22px;font-weight:800;color:#800000;">#' . $orderIdPadded . '</div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="46%" style="background:#f7faff;border-radius:10px;padding:16px 18px;">
+                    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:700;margin-bottom:4px;">Order Date</div>
+                    <div style="font-size:14px;font-weight:600;color:#333;">' . $orderDate . '</div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Items Table -->
+              <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px;">Items Ordered</div>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:10px;overflow:hidden;border:1px solid #f0f0f0;margin-bottom:24px;">
+                <thead>
+                  <tr style="background:#f8f8f8;">
+                    <th style="padding:12px;text-align:left;font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Product</th>
+                    <th style="padding:12px;text-align:right;font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Unit Price</th>
+                    <th style="padding:12px;text-align:right;font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>' . $itemRowsHtml . $notesRow . '</tbody>
+              </table>
+
+              <!-- Totals -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td style="text-align:right;padding:6px 0;font-size:14px;color:#555;">Subtotal:</td>
+                  <td style="text-align:right;padding:6px 0;font-size:14px;color:#333;font-weight:600;width:120px;">&#2547;' . number_format($mailOrderTotal, 0) . '</td>
+                </tr>
+                <tr>
+                  <td style="text-align:right;padding:6px 0;font-size:14px;color:#555;">Shipping Charge:</td>
+                  <td style="text-align:right;padding:6px 0;font-size:14px;color:#333;font-weight:600;">&#2547;' . number_format($shippingCharge, 0) . '</td>
+                </tr>
+                <tr>
+                  <td colspan="2"><hr style="border:none;border-top:2px dashed #eee;margin:8px 0;"></td>
+                </tr>
+                <tr>
+                  <td style="text-align:right;padding:6px 0;font-size:17px;font-weight:800;color:#800000;">Total Amount:</td>
+                  <td style="text-align:right;padding:6px 0;font-size:17px;font-weight:800;color:#800000;">&#2547;' . number_format($mailGrandTotal, 0) . '</td>
+                </tr>
+              </table>
+
+              <!-- Shipping Info -->
+              <div style="background:#f9f9f9;border-left:4px solid #800000;border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:28px;">
+                <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:10px;">Delivery Address</div>
+                <p style="margin:0 0 4px;font-size:14px;color:#333;"><strong>' . htmlspecialchars($customerName) . '</strong></p>
+                <p style="margin:0 0 4px;font-size:13px;color:#555;">' . nl2br(htmlspecialchars($address)) . '</p>
+                <p style="margin:0;font-size:13px;color:#555;">📞 ' . htmlspecialchars($phone) . '</p>
+              </div>
+
+              <!-- Payment Method -->
+              <div style="background:#fff8f8;border:1px solid #f5d0d0;border-radius:10px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:12px;">
+                <div>
+                  <div style="font-weight:700;color:#333;font-size:14px;">Cash on Delivery (COD)</div>
+                  <div style="font-size:12px;color:#888;margin-top:2px;">Pay when your order arrives at your doorstep.</div>
+                </div>
+              </div>
+
+              <!-- What\'s Next Steps -->
+              <div style="margin-bottom:28px;">
+                <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:14px;">⏭️ What Happens Next?</div>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding:0 0 12px;">
+                      <div style="display:inline-block;background:#800000;color:#fff;border-radius:50%;width:26px;height:26px;line-height:26px;text-align:center;font-size:12px;font-weight:700;margin-right:10px;">1</div>
+                      <span style="font-size:14px;color:#444;">Our team will verify &amp; confirm your order</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:0 0 12px;">
+                      <div style="display:inline-block;background:#800000;color:#fff;border-radius:50%;width:26px;height:26px;line-height:26px;text-align:center;font-size:12px;font-weight:700;margin-right:10px;">2</div>
+                      <span style="font-size:14px;color:#444;">Your order will be packed and dispatched</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div style="display:inline-block;background:#800000;color:#fff;border-radius:50%;width:26px;height:26px;line-height:26px;text-align:center;font-size:12px;font-weight:700;margin-right:10px;">3</div>
+                      <span style="font-size:14px;color:#444;">Delivery to your address – pay on arrival!</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- ── Footer ── -->
+          <tr>
+            <td style="padding:24px 0 0;text-align:center;">
+              <p style="margin:0 0 6px;font-size:13px;color:#aaa;">© ' . date('Y') . ' Mat-Mee. All rights reserved.</p>
+              <p style="margin:0;font-size:12px;color:#bbb;">This email was sent to <a href="mailto:' . htmlspecialchars($customerEmail) . '" style="color:#800000;text-decoration:none;">' . htmlspecialchars($customerEmail) . '</a></p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>';
+require_once 'env.php'; // Load email credentials
+                    try {
+                        $mail->isSMTP();
+                        $mail->Host       = 'smtp.gmail.com';
+                        $mail->SMTPAuth   = true;
+                        $mail->Username   = $gmail;
+                        $mail->Password   = $password;
+                        $mail->SMTPSecure = 'tls';
+                        $mail->Port       = 587;
+                        $mail->CharSet    = 'UTF-8';
+
+                        $mail->setFrom($gmail, 'Mat-Mee');
+                        $mail->addAddress($customerEmail, $customerName);
+
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Order Confirmed #' . $orderIdPadded . ' – Mat-Mee';
+                        $mail->Body    = $emailBody;
+                        $mail->AltBody = 'Hi ' . $customerName . ', your order #' . $orderIdPadded . ' has been placed successfully! Grand total: BDT ' . number_format($mailGrandTotal, 0) . '. Thank you for shopping with Mat-Mee.';
+
+                        $mail->send();
+                    } catch (Exception $e) {
+                        // Email failure is non-critical – order already saved
+                        error_log('Mailer Error: ' . $mail->ErrorInfo);
+                    }
                     header('Location: order-confirmation.php?id=' . $orderId);
+                    
                     exit;
                 }
             }

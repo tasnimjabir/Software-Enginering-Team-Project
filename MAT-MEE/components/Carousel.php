@@ -75,8 +75,8 @@ function hexToRgba(string $hex, float $a): string {
                     <?php endif; ?>
 
                     <?php if (!empty($s['button_text']) && !empty($s['button_link'])): ?>
-                    <div class="mm-btns">
-                        <a href="products.php" class="mm-btn-outline" style = "color:<?= $color ?>; border-color:<?= $color ?>">সব পণ্য দেখুন</a>
+                    <div class="mm-btns" <?php if($s['text_position'] == 'center'): ?>style="margin:0 auto;"<?php endif; ?>>
+                        <a href="shop.php" class="mm-btn-outline" style = "color:<?= $color ?>; border-color:<?= $color ?>">সব পণ্য দেখুন</a>
                         <a href="<?= htmlspecialchars($s['button_link']) ?>" class="mm-btn-primary">
                             <?= htmlspecialchars($s['button_text']) ?>
                             <i class="bi bi-arrow-right"></i>

@@ -331,40 +331,64 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
     </div>
   </section>
 
-  <!-- ── Related products ── -->
-  <?php if (!empty($related)): ?>
+<!-- ── Related products ── -->
   <section class="pv-related">
-    <div class="pv-wrap">
+    <div class="container-xl">
       <h2 class="pv-section-heading">Related Products</h2>
-      <div class="pv-related-grid">
-        <?php foreach ($related as $r):
-          $rHasDisc = !empty($r['discount_price']) && (float)$r['discount_price'] < (float)$r['price'];
-          $rPrice   = $rHasDisc ? (float)$r['discount_price'] : (float)$r['price'];
-          $rPct     = $rHasDisc ? round((1 - $r['discount_price'] / $r['price']) * 100) : 0;
-        ?>
-        <a class="pv-rel-card" href="product-view.php?slug=<?= htmlspecialchars($r['slug']) ?>">
-          <div class="pv-rel-img">
-            <?php if ($rHasDisc): ?>
-              <span class="pv-rel-badge">-<?= $rPct ?>%</span>
-            <?php endif; ?>
-            <img src="upload/products/<?= htmlspecialchars($r['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($r['name']) ?>" loading="lazy">
-            <div class="pv-rel-hover-overlay"><i class="bi bi-eye"></i></div>
-          </div>
-          <div class="pv-rel-body">
-            <p class="pv-rel-name"><?= htmlspecialchars($r['name']) ?></p>
-            <div class="pv-rel-price">
-              <span class="pv-rel-final">৳<?= number_format($rPrice, 0) ?></span>
-              <?php if ($rHasDisc): ?>
-                <span class="pv-rel-orig">৳<?= number_format($r['price'], 0) ?></span>
-              <?php endif; ?>
-            </div>
-          </div>
-        </a>
-        <?php endforeach; ?>
-      </div>
-    </div>
+    <?php
+      require_once 'components/classes/ProductBuilder.php';
+      $related = (new ProductBuilder('user'))->setCategory($product['cat_name'])->getInstance();
+      $related->addCondition("p.id != ?", $product['id'])->addOrder("RAND()")->fetch()->render();
+    ?>
+  </div>
+      <!-- Product Modals & Styles -->
+    <link rel="stylesheet" href="asset/css/productcard.css">
   </section>
-  <?php endif; ?>
+  <!-- Product Image Modal -->
+    <div id="productImageModal" class="product-modal">
+        <div class="modal-content">
+            <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
+            <div class="modal-image-container">
+                <img id="modalProductImage" src="" alt="Product image">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalProductName"></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add to Cart Modal -->
+    <div id="addToCartModal" class="product-modal">
+        <div class="modal-content cart-modal-content">
+            <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
+            <div class="cart-modal-body">
+                <div class="cart-modal-image">
+                    <img id="cartModalImage" src="" alt="Product image">
+                </div>
+                <div class="cart-modal-info">
+                    <h3 id="cartModalName"></h3>
+                    <p id="cartModalPrice" class="cart-modal-price"></p>
+                    <form id="addToCartForm">
+                        <div class="form-group">
+                            <label for="productSize">Size:</label>
+                            <select id="productSize" name="size" class="form-control" required>
+                                <option value="">-- Select Size --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productQuantity">Quantity:</label>
+                            <div class="quantity-selector">
+                                <button type="button" class="qty-btn qty-minus">−</button>
+                                <input type="number" id="productQuantity" name="quantity" value="1" min="1" max="100" class="form-control qty-input">
+                                <button type="button" class="qty-btn qty-plus">+</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn cart-submit-btn">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div><!-- /pv-page -->
 
@@ -542,6 +566,8 @@ $pageTitle = htmlspecialchars($product['name']) . ' — MAT-MEE';
 
 })();
 </script>
+    <!-- Shop Management Script -->
+    <script src="asset/js/shop.js?v=2"></script>
 
 <?php 
 ob_end_flush(); // Flush output buffer
