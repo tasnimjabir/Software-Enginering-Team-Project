@@ -99,7 +99,7 @@ foreach ($cartItems as $item) {
     $price = (!empty($item['discount_price']) && (float)$item['discount_price'] < (float)$item['price']) ? (float)$item['discount_price'] : (float)$item['price'];
     $cartTotal += $price * $item['quantity'];
 }
-?>?>
+?>
 
 <style>
 /* Modern Minimalist Cart Styles */
@@ -229,7 +229,7 @@ foreach ($cartItems as $item) {
                 <div class="card">
                     <div class="card-body text-center py-5">
                         <p class="fs-5 text-muted">Your cart is empty</p>
-                        <a href="shop.php" class="btn btn-primary">Continue Shopping</a>
+                        <a href="shop.php" class="btn" style="background-color: #800000; border-color: #800000; color: #fff;">Continue Shopping</a>
                     </div>
                 </div>
             <?php else: ?>
@@ -257,7 +257,7 @@ foreach ($cartItems as $item) {
                                             <img src="upload/products/<?= htmlspecialchars($item['main_image'] ?: 'image/placeholder.jpg') ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-100 h-100" style="object-fit: cover;">
                                         </div>
                                         <div>
-                                            <a href="product-view.php?id=<?= $item['product_id'] ?>" class="text-decoration-none fw-semibold text-dark"><?= htmlspecialchars($item['name']) ?></a>
+                                            <a href="product-view.php?slug=<?= urlencode($item['slug'] ?? '') ?>" class="text-decoration-none fw-semibold text-dark"><?= htmlspecialchars($item['name']) ?></a>
                                         </div>
                                     </div>
                                 </td>

@@ -43,7 +43,7 @@ if (!empty($currentCategory)) {
         "SELECT COUNT(p.id) AS total
          FROM   products p
          JOIN   categories c ON p.category_id = c.id
-         WHERE  c.name = '{$safeCat}'"
+         WHERE  c.slug = '{$safeCat}'"
     );
 } else {
     $countRes = $db->fetch("SELECT COUNT(*) AS total FROM products");
@@ -54,7 +54,7 @@ $totalProducts = $countRes[0]['total'] ?? 0;
 $activeCat = null;
 if (!empty($currentCategory)) {
     foreach ($categories as $cat) {
-        if ($cat['name'] === $currentCategory) { $activeCat = $cat; break; }
+        if ($cat['slug'] === $currentCategory) { $activeCat = $cat; break; }
     }
 }
 
@@ -87,10 +87,10 @@ if ($activeCat && !empty($activeCat['image'])) {
         <nav class="shop-breadcrumb">
             <a href="index.php">Home</a>
             <span class="sep">›</span>
-            <?php if (!empty($currentCategory)): ?>
+            <?php if (!empty($currentCategory) && $activeCat): ?>
                 <a href="shop.php">Shop</a>
                 <span class="sep">›</span>
-                <span class="current"><?= htmlspecialchars($currentCategory) ?></span>
+                <span class="current"><?= htmlspecialchars($activeCat['name']) ?></span>
             <?php else: ?>
                 <span class="current">Shop</span>
             <?php endif; ?>
@@ -98,8 +98,8 @@ if ($activeCat && !empty($activeCat['image'])) {
 
         <!-- Title -->
         <h1 class="shop-hero__title">
-            <?php if (!empty($currentCategory)): ?>
-                <?= htmlspecialchars($currentCategory) ?>
+            <?php if (!empty($currentCategory) && $activeCat): ?>
+                <?= htmlspecialchars($activeCat['name']) ?>
             <?php else: ?>
                 Our&nbsp;<em>Collection</em>
             <?php endif; ?>
@@ -131,9 +131,9 @@ if ($activeCat && !empty($activeCat['image'])) {
             $catBg = !empty($cat['image'])
                      ? 'upload/categories/' . htmlspecialchars($cat['image'])
                      : $shopImg;
-            $isActive = ($cat['name'] === $currentCategory) ? 'active' : '';
+            $isActive = ($cat['slug'] === $currentCategory) ? 'active' : '';
         ?>
-        <a href="shop.php?category=<?= urlencode($cat['name']) ?>"
+        <a href="shop.php?category=<?= urlencode($cat['slug']) ?>"
            class="hero-cat-item <?= $isActive ?>">
             <?php if ($catBg): ?>
             <span class="hero-cat-item__bg"
@@ -160,7 +160,7 @@ if ($activeCat && !empty($activeCat['image'])) {
                 <div class="categories-sidebar">
 
                     <!-- Header -->
-                    <div class="sidebar-top">
+                    <div class="sidebar-top d-none d-md-block">
                         <div class="sidebar-top__label">Browse by</div>
                         <div class="sidebar-top__title">CATE<span>GORY</span></div>
                     </div>
@@ -180,12 +180,12 @@ if ($activeCat && !empty($activeCat['image'])) {
                                 $catBg   = !empty($cat['image'])
                                            ? 'upload/categories/' . htmlspecialchars($cat['image'])
                                            : $shopImg;
-                                $isActive = ($cat['name'] === $currentCategory) ? 'active' : '';
+                                $isActive = ($cat['slug'] === $currentCategory) ? 'active' : '';
                                 $desc     = !empty($cat['description'])
                                             ? mb_strimwidth($cat['description'], 0, 60, '…')
                                             : '';
                             ?>
-                            <a href="shop.php?category=<?= urlencode($cat['name']) ?>"
+                            <a href="shop.php?category=<?= urlencode($cat['slug']) ?>"
                                class="cat-card <?= $isActive ?>">
                                 <?php if ($catBg): ?>
                                 <span class="cat-card__bg"
@@ -221,8 +221,8 @@ if ($activeCat && !empty($activeCat['image'])) {
                 <div class="sort-bar">
                     <div class="sort-bar__left">
                         <span class="sort-bar__heading">
-                            <?php if (!empty($currentCategory)): ?>
-                                <?= htmlspecialchars(strtoupper($currentCategory)) ?>
+                            <?php if (!empty($currentCategory) && $activeCat): ?>
+                                <?= htmlspecialchars(strtoupper($activeCat['name'])) ?>
                             <?php elseif (!empty($searchQuery)): ?>
                                 RESULTS
                             <?php else: ?>
@@ -265,7 +265,7 @@ if ($activeCat && !empty($activeCat['image'])) {
                         $productBuilder = new ProductBuilder('user');
 
                         if (!empty($currentCategory))
-                            $productBuilder->setCategory($currentCategory);
+                            $productBuilder->setCategoryBySlug($currentCategory);
 
                         if (!empty($searchQuery))
                             $productBuilder->setSearch($searchQuery);
@@ -288,163 +288,8 @@ if ($activeCat && !empty($activeCat['image'])) {
 
 
     <!-- Product Modals & Styles -->
-    <style>
-        .product-modal {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            z-index: 9999 !important;
-            display: none;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(0, 0, 0, 0.6) !important;
-            backdrop-filter: blur(2px);
-        }
+    <link rel="stylesheet" href="asset/css/productcard.css">
 
-        .product-modal[style*="display: flex"] {
-            display: flex !important;
-        }
-
-        .modal-content {
-            position: relative;
-            background: white;
-            border-radius: 0;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .cart-modal-content {
-            max-width: 700px;
-        }
-
-        .cart-modal-body {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: #f7f6f4;
-            color: #111111;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: #111111;
-            color: white;
-        }
-
-        .modal-image-container {
-            width: 100%;
-            background: #f7f6f4;
-        }
-
-        .modal-image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .cart-modal-image {
-            background: #f7f6f4;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .cart-modal-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .cart-modal-info h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .cart-modal-price {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .qty-input {
-            width: 60px;
-            text-align: center;
-        }
-
-        .qty-btn {
-            width: 36px;
-            height: 36px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: #f7f6f4;
-            border-color: #d1d5db;
-        }
-
-        .cart-submit-btn {
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        @media (max-width: 576px) {
-            .cart-modal-body {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
-        }
-
-        .fade-out {
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-    </style>
 
     <!-- Product Image Modal -->
     <div id="productImageModal" class="product-modal">
@@ -493,6 +338,6 @@ if ($activeCat && !empty($activeCat['image'])) {
     </div>
 
     <!-- Shop Management Script -->
-    <script src="asset/js/shop.js"></script>
+    <script src="asset/js/shop.js?v=2"></script>
 
 <?php require_once 'components/page_close.php'; ?>

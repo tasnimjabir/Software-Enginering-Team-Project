@@ -28,7 +28,7 @@ Client: MAT MEE
             
             <!-- Category Selector -->
             <div class="category-selector-wrapper container">
-                <div class="category-selector" style="flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; padding-bottom: 5px; justify-content: flex-start; align-items: center;">
+                <div class="category-selector" style="display: inline-flex; max-width: 100%; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; padding-bottom: 5px; justify-content: flex-start; align-items: center;">
                     <button class="category-btn active" data-category="" style="flex-shrink: 0; margin-left: 10px;">
                         All Products
                     </button>
@@ -47,163 +47,7 @@ Client: MAT MEE
     </section>
 
     <!-- Product Modals & Styles -->
-    <style>
-        .product-modal {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            z-index: 9999 !important;
-            display: none;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(0, 0, 0, 0.6) !important;
-            backdrop-filter: blur(2px);
-        }
-
-        .product-modal[style*="display: flex"] {
-            display: flex !important;
-        }
-
-        .modal-content {
-            position: relative;
-            background: white;
-            border-radius: 0;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .cart-modal-content {
-            max-width: 700px;
-        }
-
-        .cart-modal-body {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: #f7f6f4;
-            color: #111111;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: #111111;
-            color: white;
-        }
-
-        .modal-image-container {
-            width: 100%;
-            background: #f7f6f4;
-        }
-
-        .modal-image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .cart-modal-image {
-            background: #f7f6f4;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .cart-modal-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .cart-modal-info h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .cart-modal-price {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .qty-input {
-            width: 60px;
-            text-align: center;
-        }
-
-        .qty-btn {
-            width: 36px;
-            height: 36px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: #f7f6f4;
-            border-color: #d1d5db;
-        }
-
-        .cart-submit-btn {
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        @media (max-width: 576px) {
-            .cart-modal-body {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
-        }
-
-        .fade-out {
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-    </style>
+    <link rel="stylesheet" href="asset/css/productcard.css">
 
     <!-- Product Image Modal -->
     <div id="productImageModal" class="product-modal">
@@ -252,7 +96,7 @@ Client: MAT MEE
     </div>
 
     <!-- Shop Management Script -->
-    <script src="asset/js/shop.js"></script>
+    <script src="asset/js/shop.js?v=2"></script>
 
 
 <style>
@@ -273,7 +117,7 @@ Client: MAT MEE
 <div class="w-100">
     <div class="map">
         <iframe 
-            src="https://www.google.com/maps?q=Dhaka,Bangladesh&output=embed">
+            src="https://www.google.com/maps?q=জাহাজ কোম্পানি শপিং কমপ্লেক্স, রংপুর,Bangladesh&output=embed">
         </iframe>
     </div>
 </div>

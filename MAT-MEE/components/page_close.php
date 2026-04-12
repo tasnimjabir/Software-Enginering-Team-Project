@@ -17,10 +17,9 @@
                 </div>
                 <div class="col-md-4">
                     <h6>Contact Us</h6>
-                    <p>Email: matmee.official@gmail.com</p>
-                    <p>Phone: 01746590658</p>
-                    <p>Facebook: fb.com/matmeerangpur</p>
-
+                    <p>Email: <a href="mailto:matmee.official@gmail.com">matmee.official@gmail.com</a></p>
+                    <p>Phone: <a href="tel:+8801746590658">+8801746590658</a></p>
+                    <p>Facebook: <a href="https://www.facebook.com/matmeerangpur" target="_blank">fb.com/matmeerangpur</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -29,7 +28,11 @@
         </div>
     </footer>
 
-
+<style>
+    footer a{
+        color:#fff;
+    }
+</style>
 
 
 

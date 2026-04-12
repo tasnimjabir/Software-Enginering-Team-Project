@@ -17,7 +17,7 @@ require_once 'config-component.php';
                 </a>
 
                 <!-- Right side: search icon (mobile) + toggler -->
-                <div class="d-flex align-items-center gap-2 ms-auto d-sm-none">
+                <div class="d-flex align-items-center gap-1 ms-auto d-sm-none">
                     <!-- Mobile search toggle button -->
                     <button class="search-toggle-btn" id="searchToggleBtn" aria-label="Toggle search" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
@@ -25,6 +25,17 @@ require_once 'config-component.php';
                             <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
                         </svg>
                     </button>
+                    <!-- Cart Icon with Badge -->
+                    <a href="cart.php" class="cart-icon-link d-flex d-sm-none ms-2" title="Shopping Cart" aria-label="Shopping Cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352L2.977 3H14.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H2.968a.5.5 0 0 1-.491-.408l-1.5-8A.5.5 0 0 1 1 3H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <?php if (isset($cartCount) && $cartCount > 0): ?>
+                            <span class="cart-badge"><?php echo $cartCount; ?></span>
+                        <?php endif; ?>
+                    </a>
+
+                                        
 
                     <!-- Bootstrap toggler -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -47,6 +58,15 @@ require_once 'config-component.php';
                             <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
                         </svg>
                     </button>
+                    <!-- Cart Icon with Badge -->
+                    <a href="cart.php" class="cart-icon-link d-none d-sm-flex d-md-none ms-2" title="Shopping Cart" aria-label="Shopping Cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352L2.977 3H14.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H2.968a.5.5 0 0 1-.491-.408l-1.5-8A.5.5 0 0 1 1 3H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <?php if (isset($cartCount) && $cartCount > 0): ?>
+                            <span class="cart-badge"><?php echo $cartCount; ?></span>
+                        <?php endif; ?>
+                    </a>
 
                 <!-- Desktop search — sits after menu, outside collapse -->
                 <div class="search-bar-desktop d-none d-sm-flex align-items-center gap-3" id="searchBarDesktop">
@@ -83,7 +103,7 @@ require_once 'config-component.php';
         </nav>
 
         <!-- Mobile search dropdown — hidden by default, toggled via JS -->
-        <div class="search-bar-mobile d-sm-none" id="searchBarMobile">
+        <div class="search-bar-mobile d-md-none" id="searchBarMobile">
             <div class="container">
                 <form class="search-form-mobile" action="shop.php" method="GET">
                     <div class="search-wrap-mobile">
@@ -110,24 +130,34 @@ require_once 'config-component.php';
 
     <script>
         (function () {
-            var btn = document.getElementById('searchToggleBtn');
+            var btns = document.querySelectorAll('.search-toggle-btn');
             var bar = document.getElementById('searchBarMobile');
             var input = document.getElementById('mobileSearchInput');
-            if (!btn || !bar) return;
+            if (btns.length === 0 || !bar) return;
 
-            btn.addEventListener('click', function () {
-                var isOpen = bar.classList.toggle('search-bar-mobile--open');
-                btn.classList.toggle('search-toggle-btn--active', isOpen);
-                if (isOpen) {
-                    setTimeout(function () { input && input.focus(); }, 80);
-                }
+            btns.forEach(function(btn) {
+                btn.addEventListener('click', function () {
+                    var isOpen = bar.classList.toggle('search-bar-mobile--open');
+                    btns.forEach(function(b) {
+                        b.classList.toggle('search-toggle-btn--active', isOpen);
+                    });
+                    if (isOpen) {
+                        setTimeout(function () { input && input.focus(); }, 80);
+                    }
+                });
             });
 
             // Close if user clicks outside
             document.addEventListener('click', function (e) {
-                if (!bar.contains(e.target) && !btn.contains(e.target)) {
+                var isClickInsideBtn = Array.from(btns).some(function(btn) {
+                    return btn.contains(e.target);
+                });
+                
+                if (!bar.contains(e.target) && !isClickInsideBtn) {
                     bar.classList.remove('search-bar-mobile--open');
-                    btn.classList.remove('search-toggle-btn--active');
+                    btns.forEach(function(b) {
+                        b.classList.remove('search-toggle-btn--active');
+                    });
                 }
             });
         })();

@@ -17,6 +17,10 @@ class ProductBuilder {
         $this->product->addCondition("c.name = ?", $category);
         return $this;
     }
+    public function setCategoryBySlug(string $slug) {
+        $this->product->addCondition("c.slug = ?", $slug);
+        return $this;
+    }
     public function setSearch(string $search) {
         $this->product->addCondition("p.name LIKE ?", "%".$search."%");
         return $this;

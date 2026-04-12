@@ -10,6 +10,7 @@
 				'products.php' => 'Products',
 				'categories.php' => 'Categories',
 				// 'orders.php' => 'Orders',
+				'messages.php' => 'Contact Messages',
 				// 'reports.php' => 'Reports',
 				'carousel.php' => 'Carousel',
 				'info.php' => 'Info',

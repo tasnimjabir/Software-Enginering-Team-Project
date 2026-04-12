@@ -167,7 +167,7 @@ $categoriesForDropdown = $conn->fetch("SELECT slug, name, image FROM categories 
             On desktop hovering the <li> reveals the mega panel via CSS.
         -->
         <a class="nav-link shop-toggle" href="shop.php">
-            Shop <i class="bi bi-chevron-down" style="font-size:0.65rem; opacity:0.7;"></i>
+            Shop <i class="bi bi-chevron-down d-none d-sm-inline" style="font-size:0.65rem; opacity:0.7;"></i>
         </a>
 
         <div class="mega-dropdown-menu">
