@@ -1,0 +1,96 @@
+# MAT-MEE Project - Function Point (FP) Estimate Report
+(Estimated using the IFPUG Method)
+
+## 1. Identification of Component Types
+
+### 1.1 Internal Logical Files (ILF)
+These are user-identifiable groups of logically related data that reside entirely within the application boundary and are maintained through external inputs. In MAT-MEE, these correlate to the primary database entities:
+1. Users Data (User Accounts)
+2. Admins Data (Admin Accounts)
+3. Categories Management
+4. Products Catalog
+5. Product Images
+6. Product Sizes
+7. Shopping Cart Data
+8. Orders Tracking
+9. Metadata / Settings
+10. Carousel Slides (UI Configuration)
+11. FAQs Content
+12. Contact Messages
+**Total count: 12 ILFs**
+
+### 1.2 External Interface Files (EIF)
+Logically related data residing outside the application that is referenced by the project.
+1. External Authentication Information (Google OAuth referenced via `google_id`)
+2. Email/SMTP Gateway Processing (via PHPMailer for OTP / Notifications)
+**Total count: 2 EIFs**
+
+### 1.3 External Inputs (EI)
+Processes that process data or control information coming from outside the application boundary that maintains an ILF or alters system behavior.
+- **Admin Actions:** Add/Edit/Delete Products, Add/Edit/Delete Categories, Modify Carousel, Manage FAQs, Update Order Statuses, Mark Contact Messages as Read.
+- **User Actions:** User Registration, Login / Logout, Profile Update.
+- **Cart & Transactions:** Add to Cart, Update Cart Quantities, Remove from Cart, Submit Checkout / Place Order.
+- **Public Actions:** Submit Contact Forms.
+**Estimated count: 21 EIs**
+
+### 1.4 External Outputs (EO)
+Processes that send data or control information outside the system boundary containing significant calculation or derived data.
+1. Admin Dashboard Analytical Reports & View Counts
+2. Automated System Emails (Registration OTP, Order Confirmation)
+3. User Analytics / Order Totals processing
+4. Sales Invoice/Receipt computations
+5. Dynamic Pricing Computations (including discounts logic)
+**Estimated count: 5 EOs**
+
+### 1.5 External Inquiries (EQ)
+Processes that send data outside the application where no logical file is created or updated, merely retrieved.
+- **User Views:** View Product Lists, Search Products, Filter by Categories, View Single Product Details, View Cart details, View Checkout Summary, View FAQs.
+- **Admin Views:** View lists of Users, Orders, Products, and Contact Messages.
+**Estimated count: 12 EQs**
+
+---
+
+## 2. Unadjusted Function Point (UFP) Calculation
+
+Assuming average complexity weights across all components for this estimate:
+- **ILF:** 12 components × 10 weight = 120
+- **EIF:** 2 components × 7 weight = 14
+- **EI:** 21 components × 4 weight = 84
+- **EO:** 5 components × 5 weight = 25
+- **EQ:** 12 components × 4 weight = 48
+
+**Total Unadjusted Function Points (UFP) = 120 + 14 + 84 + 25 + 48 = 291**
+
+---
+
+## 3. Value Adjustment Factor (VAF) Calculation
+
+The VAF is determined based on the 14 General System Characteristics (GSCs) scored from 0 (not present) to 5 (strong influence). For a standard online E-commerce system like MAT-MEE:
+- Data Communications (4)
+- Distributed Data Processing (3)
+- Performance Objective (4)
+- Heavily Used Configuration (3)
+- Transaction Rate (4)
+- On-Line Data Entry (5)
+- End-User Efficiency (4)
+- On-Line Update (5)
+- Complex Processing (3)
+- Reusability (3)
+- Installation Ease (2)
+- Operational Ease (3)
+- Multiple Sites (1)
+- Facilitate Change (3)
+
+**Total Degree of Influence (TDI) = 47**
+
+VAF formula: 0.65 + (TDI × 0.01)
+**VAF = 0.65 + 0.47 = 1.12**
+
+---
+
+## 4. Final Function Point Estimate
+
+Final Function Points = UFP × VAF
+FP = 291 × 1.12 = 325.92
+
+**Total Estimated Function Point Count for the MAT-MEE project ~ 326 FP**
