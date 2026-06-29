@@ -108,8 +108,8 @@ $totalOrdered    = $db->fetchOne('SELECT COALESCE(SUM(quantity),0) AS t FROM ord
 
                 <!-- Left: list-style analytics card -->
                 <div class="card" style="border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.06); overflow:hidden;">
-                    <div style="padding:14px 18px 10px; font-weight:700; font-size:.9rem; border-bottom:1px solid #f1f1f1; color:#333;">
-                        <i class="bi bi-bar-chart-line me-2" style="color:#c62828;"></i>Product Overview
+                    <div style="padding:14px 18px 10px; font-weight:700; font-size:.9rem; border-bottom:1px solid #f1f1f1; color:#eee;">
+                        <i class="bi bi-bar-chart-line me-2" style="color:#c62828;"></i> Product Overview
                     </div>
                     <?php
                     $metrics = [
@@ -124,23 +124,23 @@ $totalOrdered    = $db->fetchOne('SELECT COALESCE(SUM(quantity),0) AS t FROM ord
                     <div style="display:flex;align-items:center;justify-content:space-between;
                                 padding:9px 18px;border-bottom:1px solid #f7f7f7;
                                 transition:background .15s;"
-                         onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                         onmouseover="this.style.background='#000000'" onmouseout="this.style.background='transparent'">
                         <div style="display:flex;align-items:center;gap:9px;">
                             <span style="width:28px;height:28px;border-radius:7px;background:<?= $m[3] ?>18;
                                          display:flex;align-items:center;justify-content:center;">
                                 <i class="bi <?= $m[2] ?>" style="color:<?= $m[3] ?>;font-size:.85rem;"></i>
                             </span>
-                            <span style="font-size:.84rem;color:#555;font-weight:500;"><?= $m[0] ?></span>
+                            <span style="font-size:.84rem;color:#eee;font-weight:500;"><?= $m[0] ?></span>
                         </div>
-                        <span style="font-weight:700;font-size:.9rem;color:#222;"><?= $m[1] ?></span>
+                        <span style="font-weight:700;font-size:.9rem;color:#fff;"><?= $m[1] ?></span>
                     </div>
                     <?php endforeach; ?>
                 </div>
 
                 <!-- Right: pie chart (Discounted vs Regular) -->
                 <div class="card" style="border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.06); padding:20px;">
-                    <div style="font-weight:700;font-size:.9rem;margin-bottom:14px;color:#333;">
-                        <i class="bi bi-pie-chart me-2" style="color:#c62828;"></i>Product Distribution
+                    <div style="font-weight:700;font-size:.9rem;margin-bottom:14px;color:#eee;">
+                        <i class="bi bi-pie-chart me-2" style="color:#c62828;"></i> Product Distribution
                     </div>
                     <div style="height:220px;">
                         <canvas id="productChart"></canvas>

@@ -1,0 +1,88 @@
+# MAT-MEE API Endpoint Reference
+
+This document outlines the usage of internal REST endpoints located within the `/api` directory used for dynamically fetching data without page reloading.
+
+---
+
+### 1. Fetch Categories
+**Endpoint:** `/MAT-MEE/api/get-categories.php`
+**Method:** `GET`
+**Response Format:** `application/json`
+
+**Description:**
+Retrieves a complete list of categories along with the total count of products mapped to each category.
+
+**Parameters:**
+*None*
+
+**Example Response:**
+```json
+{
+  "success": true,
+  "categories": [
+    {
+      "id": 1,
+      "name": "Men's Clothing",
+      "product_count": 15
+    },
+    {
+      "id": 2,
+      "name": "Electronics",
+      "product_count": 8
+    }
+  ]
+}
+```
+
+---
+
+### 2. Fetch Products by Category (HTML)
+**Endpoint:** `/MAT-MEE/api/get-products-by-category.php`
+**Method:** `GET`
+**Response Format:** `text/html; charset=utf-8`
+
+**Description:**
+Generates the HTML grid components for products, scoped either to a specific category or retrieving all items. This endpoint returns HTML designed to be directly injected into the DOM.
+
+**Parameters:**
+- `category` *(optional, string)*: The category name to filter products by.
+
+**Example Usage:**
+`/api/get-products-by-category.php?category=electronics`
+
+---
+
+### 3. Fetch Product Sizes
+**Endpoint:** `/MAT-MEE/api/get-sizes.php`
+**Method:** `GET`
+**Response Format:** `application/json; charset=utf-8`
+
+**Description:**
+Retrieves the available size variations based on either a specific `category_id` or a `product_id`. If `product_id` is supplied, the API resolves the respective `category_id` internally.
+
+**Parameters:**
+- `product_id` *(optional, int)*: Resolves sizes for the category this product belongs to.
+- `category_id` *(optional, int)*: Explicitly target a category's valid sizes.
+
+*Note: At least one parameter is required.*
+
+**Example Usage:**
+`/api/get-sizes.php?product_id=45`
+`/api/get-sizes.php?category_id=3`
+
+**Example Response:**
+```json
+{
+  "success": true,
+  "sizes": [
+    {
+      "id": 1,
+      "size_name": "Small"
+    },
+    {
+      "id": 2,
+      "size_name": "Medium"
+    }
+  ]
+}
+```
